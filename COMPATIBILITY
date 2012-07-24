@@ -1,0 +1,13 @@
+            == ExoCore Operating System Kernel ==
+
+                -- Compatibility --
+
+ExoCore generally requires version 2.0 of the D language.
+
+The only supported compiler is LDC (LLVM D Compiler).
+
+ExoCore is currently tied to x86 (64-bit) with no plans to port to other
+architectures. This may change in the future if the project takes off.
+
+ExoCore can be compiled on any POSIX system, provided that the system has
+LDC installed with an x86 (64-bit) target.

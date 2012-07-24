@@ -1,0 +1,31 @@
+            == ExoCore Operating System Kernel ==
+
+                -- Installation --
+
+Building works through the Waf build system. You can obtain Waf from:
+http://code.google.com/p/waf
+
+Once installed, you must configure the project like so:
+
+    $ waf configure --target=x86
+
+The --target option specifies what architecture to build for. You can
+leave it out (in which case it defaults to x86).
+
+The ExoCore Waf script also supports some additional options:
+
+    * --mode (= "debug")
+      - Which mode to build in. Building in "debug" disables any and
+        all optimizations, while "release" enables optimization and
+        inlining.
+
+With the project configured, you can execute a build by doing:
+
+    $ waf build
+
+You can optionally build the documentation:
+
+    $ waf docs
+
+The documentation will be placed in 'docs/_build'. You'll probably
+be interested in 'docs/_build/html/index.html' primarily.

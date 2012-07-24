@@ -1,0 +1,34 @@
+            == ExoCore Operating System Kernel ==
+
+                -- Introduction --
+
+ExoCore is an operating system kernel written in the D programming language.
+It is a so-called exokernel; it only provides the bare minimum of abstraction
+needed around the hardware. This allows for most aspects of real operating
+systems to be implemented in user space.
+
+For further information, see:
+
+    * LICENSE
+      - Licensing and copyright information.
+    * COMPATIBILITY
+      - Supported compilers, architectures, etc.
+    * INSTALL
+      - Instructions on building and installing ExoCore.
+    * AUTHORS
+      - Names and contact information for ExoCore developers.
+    * THANKS
+      - Credits and appreciation where due.
+    * STYLE
+      - Coding style rules (only relevant if you're a contributor).
+
+See also the documentation in the 'docs' directory.
+
+You can reach the ExoCore community in several ways:
+
+    * IRC channels
+      - #lycus @ irc.oftc.net
+    * Mailing lists
+      - lycus-announce: http://groups.google.com/group/lycus-announce
+      - lycus-discuss: http://groups.google.com/group/lycus-discuss
+      - lycus-develop: http://groups.google.com/group/lycus-develop
