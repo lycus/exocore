@@ -18,11 +18,11 @@ typedef struct multiboot_header
     const ui32 magic; // As defined in boot.s.
     const ui32 flags; // As defined in boot.s.
     const ui32 checksum; // As defined in boot.s.
-    const ui32 header_address; // As defined in boot.s.
-    const ui32 load_address; // As defined in boot.s.
-    const ui32 load_end_address; // As defined in boot.s.
-    const ui32 bss_end_address; // As defined in boot.s.
-    const ui32 entry_address; // As defined in boot.s.
+    const ui32 header_address; // As defined in boot.s. Only present if flags[16] is set.
+    const ui32 load_address; // As defined in boot.s. Only present if flags[16] is set.
+    const ui32 load_end_address; // As defined in boot.s. Only present if flags[16] is set.
+    const ui32 bss_end_address; // As defined in boot.s. Only present if flags[16] is set.
+    const ui32 entry_address; // As defined in boot.s. Only present if flags[16] is set.
 } multiboot_header_t;
 
 // The Multiboot section header table structure.
