@@ -121,8 +121,7 @@ def configure(conf):
                  '-ffreestanding'])
 
     add_options('CFLAGS',
-                ['-fno-omit-frame-pointer',
-                 '-fstack-protector-all'])
+                ['-fno-omit-frame-pointer'])
 
     add_options('CFLAGS',
                 ['-mcmodel=kernel'])
