@@ -42,10 +42,12 @@ i386_loader:
     push ebx,
     push eax
 
-    ; Initialize EFLAGS and set I/O permission level to 3.
     xor eax, eax
+
+    ; Set I/O permission level to 3.
     bts eax, 12 ; Set EFLAGS.IOPL.1 bit.
     bts eax, 13 ; Set EFLAGS.IOPL.2 bit.
+
     push eax
     popf
 
