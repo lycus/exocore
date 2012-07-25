@@ -57,6 +57,9 @@ loader:
     push ebx ; Magic number.
     push eax ; Info structure.
 
+    ; Nullify the stack frame pointer.
+    xor ebp, ebp
+
     ; Start the kernel.
     call kmain
 
