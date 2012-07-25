@@ -85,9 +85,6 @@ i386_loader:
     ; Start the kernel. Remember to keep the stack balanced at this point.
     call kmain
 
-    ; Disable interrupt handling.
-    cli
-
 .hang:
 
     ; Make the machine hang if the kernel returns.
