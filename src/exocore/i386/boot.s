@@ -49,10 +49,16 @@ loader:
     push eax
     popf
 
-    ; Enable SSE.
     mov ecx, cr0
-    btr ecx, 2      ; clear CR0.EM bit
-    bts ecx, 1      ; set CR0.MP bit
+
+    ; Enable x87 and SSE.
+    bts ecx, 1 ; Set CR0.MP bit.
+    btr ecx, 2 ; Clear CR0.EM bit.
+
+    ; Ensure memory coherency is maintained.
+    btr ecx, 29 ; Clear CR0.NW bit.
+    bts ecx, 30 ; Set CR0.CD bit.
+
     mov cr0, ecx
 
     mov ecx, cr4
