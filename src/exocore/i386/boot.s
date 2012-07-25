@@ -37,8 +37,16 @@ loader:
     ; Set up the stack (grows down).
     mov esp, stack + STACK_SIZE
 
-    ; Reset EFLAGS.
-    push 0
+    ; Pass Multiboot bootloader information.
+    ; Expects a signature like: void kmain(ui32, void*)
+    push ebx,
+    push eax
+
+    ; Initialize EFLAGS and set I/O permission level to 3.
+    xor eax, eax
+    bts eax, 12 ; Set EFLAGS.IOPL.1 bit.
+    bts eax, 13 ; Set EFLAGS.IOPL.2 bit.
+    push eax
     popf
 
     ; Enable SSE.
@@ -52,15 +60,10 @@ loader:
     bts ecx, 10     ; set CR4.OSXMMEXCPT bit
     mov cr4, ecx
 
-    ; Pass Multiboot bootloader information.
-    ; Expects a signature like: void kmain(ui32, void*)
-    push ebx ; Magic number.
-    push eax ; Info structure.
-
     ; Nullify the stack frame pointer.
     xor ebp, ebp
 
-    ; Start the kernel.
+    ; Start the kernel. Remember to keep the stack balanced at this point.
     call kmain
 
     ; Disable interrupt handling.
