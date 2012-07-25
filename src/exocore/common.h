@@ -21,8 +21,6 @@ typedef ui64 uiptr;
 typedef i64 iptr;
 #endif
 
-typedef ui8* str;
-
 #define attr(X) __attribute__((X))
 
 #endif

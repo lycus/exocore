@@ -65,7 +65,7 @@ typedef struct multiboot_info
     const uiptr memory_lower; // Requires flags[0]. Amount of lower memory in kilobytes.
     const uiptr memory_upper; // Requires flags[0]. Amount of upper memory in kilobytes.
     const ui32 boot_device; // Requires flags[1]. Contains info about the device the kernel was booted from.
-    const str command_line; // Requires flags[2]. Zero-terminated string containing kernel arguments.
+    const ui8* const command_line; // Requires flags[2]. Zero-terminated string containing kernel arguments.
     const ui32 module_count; // Requires flags[3]. How many modules are loaded with the kernel?
     const module_t* const modules; // Requires flags[3]. Pointer to the module array.
     const multiboot_section_header_table_t header_table; // Requires flags[5].
