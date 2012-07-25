@@ -21,6 +21,11 @@ typedef ui64 uiptr;
 typedef i64 iptr;
 #endif
 
+typedef _Bool bool;
+
+#define true 1
+#define false 0
+
 #define attr(X) __attribute__((X))
 
 #endif

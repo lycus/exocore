@@ -1,4 +1,3 @@
-#include "common.h"
 #include "boot/multiboot.h"
 
 void kmain(const ui32 magic, const multiboot_info_t* const info attr(unused))
