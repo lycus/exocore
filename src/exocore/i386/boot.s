@@ -7,7 +7,7 @@ extern edata
 extern end
 
 ; Export the loader routine (our entry point).
-global loader
+global i386_loader
 
 MAGIC equ 0x1badb002 ; Multiboot magic number.
 FLAGS equ 0x00010003 ; Multiboot module flags (we require memory info and module page alignment).
@@ -30,9 +30,9 @@ header:
     dd start
     dd edata
     dd end
-    dd loader
+    dd i386_loader
 
-loader:
+i386_loader:
 
     ; Set up the stack (grows down).
     mov esp, stack + STACK_SIZE
