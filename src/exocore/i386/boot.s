@@ -62,8 +62,16 @@ loader:
     mov cr0, ecx
 
     mov ecx, cr4
-    bts ecx, 9      ; set CR4.OSFXSR bit
-    bts ecx, 10     ; set CR4.OSXMMEXCPT bit
+
+    ; Allow DR4 and DR5 access for compatibility.
+    bts ecx, 3 ; Set CR4.DE bit.
+
+    ; Enable saving/restoring of x87 and SSE state.
+    bts ecx, 9 ; Set CR4.OSFXSR bit.
+
+    ; Support unmasked SIMD exceptions.
+    bts ecx, 10 ; Set CR4.OSXMMEXCPT bit.
+
     mov cr4, ecx
 
     ; Nullify the stack frame pointer.
