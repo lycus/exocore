@@ -7,10 +7,7 @@ http://code.google.com/p/waf
 
 Once installed, you must configure the project like so:
 
-    $ waf configure --target=x86
-
-The --target option specifies what architecture to build for. You can
-leave it out (in which case it defaults to x86).
+    $ waf configure
 
 The ExoCore Waf script also supports some additional options:
 
@@ -18,6 +15,9 @@ The ExoCore Waf script also supports some additional options:
       - Which mode to build in. Building in "debug" disables any and
         all optimizations, while "release" enables optimization and
         inlining.
+    * --target (= "i386")
+      - Which architecture to build for. Values accepted are currently
+        "i386" and "x86_64".
 
 With the project configured, you can execute a build by doing:
 
