@@ -34,6 +34,9 @@ header:
 
 i386_loader:
 
+    ; Disable interrupts.
+    cli
+
     ; Set up the stack (grows down).
     mov esp, stack + STACK_SIZE
 
