@@ -123,6 +123,9 @@ def configure(conf):
     add_options('CFLAGS',
                 ['-fno-omit-frame-pointer'])
 
+    add_options('CFLAGS',
+                ['-mcmodel=kernel'])
+
     if conf.options.mode == 'debug':
         add_options('CFLAGS',
                     ['-fcatch-undefined-behavior',
