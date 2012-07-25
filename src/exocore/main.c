@@ -1,3 +1,4 @@
+#include "console.h"
 #include "boot/multiboot.h"
 
 void kmain(const ui32 magic, const multiboot_info_t* const info attr(unused))
@@ -6,10 +7,9 @@ void kmain(const ui32 magic, const multiboot_info_t* const info attr(unused))
     if (magic != 0x2badb002)
         return;
 
-    volatile ui8* const video = (volatile ui8* const)0xB8000;
+    console_clear();
 
-    video[0] = 65;
-    video[1] = 0x07;
+    console_print(CONSOLE_COLOR_WHITE, CONSOLE_COLOR_BLACK, "Kernel booted.\n");
 
     for (;;)
     {
