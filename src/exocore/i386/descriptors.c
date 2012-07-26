@@ -3,11 +3,11 @@
 #include "exocore/pic.h"
 #include "exocore/i386/descriptors.h"
 
-static gdt_entry_t gdt[GDT_SIZE]; // The global descriptor table.
-static gdt_pointer_t gdt_pointer; // Pointer to the GDT.
+static gdt_entry_t gdt[GDT_SIZE] attr(aligned(8)); // The global descriptor table.
+static gdt_pointer_t gdt_pointer attr(aligned(8)); // Pointer to the GDT.
 
-static idt_entry_t idt[IDT_SIZE]; // The interrupt descriptor table.
-static idt_pointer_t idt_pointer; // Pointer to the IDT.
+static idt_entry_t idt[IDT_SIZE] attr(aligned(8)); // The interrupt descriptor table.
+static idt_pointer_t idt_pointer attr(aligned(8)); // Pointer to the IDT.
 
 // These functions are used to activate new GDTs/IDTs.
 
