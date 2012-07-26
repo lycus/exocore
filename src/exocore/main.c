@@ -34,4 +34,7 @@ void kmain(const ui32 magic, const multiboot_info_t* const info attr(unused))
     for (;;)
     {
     }
+
+    disable_interrupts();
+    halt_machine();
 }
