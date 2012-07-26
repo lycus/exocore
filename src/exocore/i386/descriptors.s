@@ -34,6 +34,9 @@ i386_idt_flush:
     ; IDT pointer is the first argument.
     mov eax, [esp + 4]
 
+    ; Just in case...
+    cli
+
     ; Load the IDT.
     lidt [eax]
 
