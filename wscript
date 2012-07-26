@@ -110,7 +110,6 @@ def configure(conf):
                  '-Wold-style-definition',
                  '-Wmissing-declarations',
                  '-Wmissing-format-attribute',
-                 '-Wpacked',
                  '-Wpadded',
                  '-Wredundant-decls',
                  '-Winline'])

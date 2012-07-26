@@ -23,7 +23,7 @@ typedef struct multiboot_header
     const ui32 load_end_address; // As defined in boot.s. Only present if flags[16] is set.
     const ui32 bss_end_address; // As defined in boot.s. Only present if flags[16] is set.
     const ui32 entry_address; // As defined in boot.s. Only present if flags[16] is set.
-} multiboot_header_t;
+} attr(packed) multiboot_header_t;
 
 // The Multiboot section header table structure.
 typedef struct multiboot_section_header_table
@@ -32,7 +32,7 @@ typedef struct multiboot_section_header_table
     const ui32 size; // Size of each section header entry.
     const uiptr address; // Pointer to the section header array.
     const ui8* const string_table; // Symbol string table.
-} multiboot_section_header_table_t;
+} attr(packed) multiboot_section_header_table_t;
 
 // The module structure.
 typedef struct module
@@ -41,7 +41,7 @@ typedef struct module
     const uiptr end; // End address.
     const ui8* const arguments; // Zero-terminated string containing module arguments.
     const ui32 reserved; // Do not use. Always 0.
-} module_t;
+} attr(packed) module_t;
 
 // The Multiboot memory map structure.
 typedef struct multiboot_memory_map
@@ -49,14 +49,14 @@ typedef struct multiboot_memory_map
     const ui64 address; // Starting address of the memory map.
     const ui64 length; // Length in bytes of the memory map.
     const ui32 type; // If equal to 1, RAM. Otherwise, reserved.
-} multiboot_memory_map_t;
+} attr(packed) multiboot_memory_map_t;
 
 // The Multiboot memory map pair structure.
 typedef struct multiboot_memory_map_pair
 {
     const ui32 size; // Bytes needed to skip to next pair.
     const multiboot_memory_map_t memory_map; // The memory map at this location.
-} multiboot_memory_map_pair_t;
+} attr(packed) multiboot_memory_map_pair_t;
 
 // The Multiboot information structure.
 typedef struct multiboot_info
@@ -82,6 +82,6 @@ typedef struct multiboot_info
     const ui16 vbe_interface_segment; // Requires flags[11].
     const ui16 vbe_interface_offset; // Requires flags[11].
     const ui16 vbe_interface_length; // Requires flags[11].
-} multiboot_info_t;
+} attr(packed) multiboot_info_t;
 
 #endif
