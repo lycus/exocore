@@ -127,6 +127,9 @@ def configure(conf):
 
     if conf.options.mode == 'debug':
         add_options('CFLAGS',
+                    ['-DEXOCORE_DEBUG'])
+
+        add_options('CFLAGS',
                     ['-fcatch-undefined-behavior',
                      '-ftrapv'])
 
