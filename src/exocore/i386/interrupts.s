@@ -2,6 +2,20 @@ section .text
 
 align 4
 
+global enable_interrupts
+
+enable_interrupts:
+
+    sti
+    ret
+
+global disable_interrupts
+
+disable_interrupts:
+
+    cli
+    ret
+
 ; Helper macro for defining ISRs with no error codes.
 %macro isr_no_error 1
     global i386_isr_%1
