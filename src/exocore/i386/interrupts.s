@@ -1,3 +1,7 @@
+section .text
+
+align 4
+
 ; Helper macro for defining ISRs with no error codes.
 %macro isr_no_error 1
     global i386_isr_%1
