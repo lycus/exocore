@@ -2,7 +2,7 @@
 #include "i386/descriptors.h"
 
 #define GDT_SIZE 5
-#define IDT_SIZE 31
+#define IDT_SIZE 32
 
 static gdt_entry_t gdt[GDT_SIZE]; // The global descriptor table.
 static gdt_pointer_t gdt_pointer; // Pointer to the GDT.
