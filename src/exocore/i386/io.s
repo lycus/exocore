@@ -70,3 +70,10 @@ io_write_ui32:
     out dx, eax
 
     ret
+
+global io_wait
+
+io_wait:
+
+    out 0x80, al
+    ret
