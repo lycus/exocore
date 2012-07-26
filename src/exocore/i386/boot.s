@@ -34,14 +34,14 @@ global i386_loader
 
 i386_loader:
 
-    ; Disable interrupts.
+    ; Disable interrupts. We enable interrupts once we
+    ; initialize the IDT during target architecture init.
     cli
 
     ; Set up the stack (grows down).
     mov esp, stack + STACK_SIZE
 
     ; Pass Multiboot bootloader information.
-    ; Expects a signature like: void kmain(ui32, void*)
     push ebx,
     push eax
 
@@ -79,25 +79,11 @@ i386_loader:
 
     mov cr4, ecx
 
-    ; Set up the GDT.
-    lgdt [gdt_header]
-
-    ; Load segment selectors.
-    mov ax, 0x10
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
-
-    jmp 0x08:.main
-
-.main:
-
     ; Nullify the stack frame pointer.
     xor ebp, ebp
 
     ; Start the kernel. Remember to keep the stack balanced at this point.
+    ; Expects a signature like: void kmain(ui32, multiboot_info*)
     call kmain
 
 .hang:
@@ -105,23 +91,6 @@ i386_loader:
     ; Make the machine hang if the kernel returns.
     hlt
     jmp .hang
-
-align 4096 ; The GDT must be aligned on a page boundary.
-
-gdt_header:
-
-    dw gdt_end - gdt_table - 1
-    dd gdt_table
-
-gdt_table:
-
-    dq 0x0000000000000000 ; The null descriptor.
-    dq 0x00CF9A000000FFFF ; Ring 0 code segment.
-    dq 0x00CF92000000FFFF ; Ring 0 data segment.
-    dq 0x00CFFA000000FFFF ; Ring 3 code segment.
-    dq 0x00CFF2000000FFFF ; Ring 3 data segment.
-
-gdt_end:
 
 section .bss
 
