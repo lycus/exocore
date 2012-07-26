@@ -86,6 +86,9 @@ i386_loader:
     ; Expects a signature like: void kmain(ui32, multiboot_info*)
     call kmain
 
+    ; Disable interrupts once the kernel exits.
+    cli
+
 .hang:
 
     ; Make the machine hang if the kernel returns.
