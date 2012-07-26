@@ -1,8 +1,8 @@
-#include "common.h"
+#include "console.h"
 
 typedef enum interrupt_id : ui32
 {
-    INTERRUPT_DIV_ZERO = 0,
+    INTERRUPT_DIVISION_BY_ZERO_EXCEPTION = 0,
     INTERRUPT_DEBUG_EXCEPTION = 1,
     INTERRUPT_NONMASKABLE = 2,
     INTERRUPT_BREAKPOINT_EXCEPTION = 3,
@@ -36,26 +36,101 @@ typedef enum interrupt_id : ui32
     INTERRUPT_RESERVED_31 = 31,
 } interrupt_id_t;
 
-typedef struct registers
+typedef struct interrupt_info
 {
-    ui32 ds; // Data segment selector.
-    ui32 edi; // General purpose EDI register.
-    ui32 esi; // General purpose ESI register.
-    ui32 ebp; // General purpose EBP register.
-    ui32 esp; // General purpose ESP register.
-    ui32 ebx; // General purpose EBX register.
-    ui32 edx; // General purpose EDX register.
-    ui32 ecx; // General purpose ECX register.
-    ui32 eax; // General purpose EAX register.
-    interrupt_id_t interrupt_identifier; // Interrupt identifier.
-    ui32 error_code; // Error code (0 if not applicable).
-    ui32 user_eip;
-    ui32 user_cs;
-    ui32 user_eflags;
-    ui32 user_esp;
-    ui32 user_ss;
-} registers_t;
+    const ui32 ds; // Data segment selector.
+    const ui32 edi; // General purpose EDI register.
+    const ui32 esi; // General purpose ESI register.
+    const ui32 ebp; // General purpose EBP register.
+    const ui32 esp; // General purpose ESP register.
+    const ui32 ebx; // General purpose EBX register.
+    const ui32 edx; // General purpose EDX register.
+    const ui32 ecx; // General purpose ECX register.
+    const ui32 eax; // General purpose EAX register.
+    const interrupt_id_t interrupt_identifier; // Interrupt identifier.
+    const ui32 error_code; // Error code (0 if not applicable).
+    const ui32 user_eip;
+    const ui32 user_cs;
+    const ui32 user_eflags;
+    const ui32 user_esp;
+    const ui32 user_ss;
+} attr(packed) interrupt_info_t;
 
-void i386_isr_handler(registers_t registers attr(unused))
+void i386_isr_handler(const interrupt_info_t info)
 {
+    switch (info.interrupt_identifier)
+    {
+        case INTERRUPT_DIVISION_BY_ZERO_EXCEPTION:
+            PANIC("Received interrupt: INTERRUPT_DIVISION_BY_ZERO_EXCEPTION\n");
+            break;
+        case INTERRUPT_DEBUG_EXCEPTION:
+            PANIC("Received interrupt: INTERRUPT_DEBUG_EXCEPTION\n");
+            break;
+        case INTERRUPT_NONMASKABLE:
+            PANIC("Received interrupt: INTERRUPT_NONMASKABLE\n");
+            break;
+        case INTERRUPT_BREAKPOINT_EXCEPTION:
+            PANIC("Received interrupt: INTERRUPT_BREAKPOINT_EXCEPTION\n");
+            break;
+        case INTERRUPT_INTO_DETECTED_OVERFLOW:
+            PANIC("Received interrupt: INTERRUPT_INTO_DETECTED_OVERFLOW\n");
+            break;
+        case INTERRUPT_OUT_OF_BOUNDS_EXCEPTION:
+            PANIC("Received interrupt: INTERRUPT_OUT_OF_BOUNDS_EXCEPTION\n");
+            break;
+        case INTERRUPT_INVALID_OPCODE_EXCEPTION:
+            PANIC("Received interrupt: INTERRUPT_INVALID_OPCODE_EXCEPTION\n");
+            break;
+        case INTERRUPT_NO_COPROCESSOR_EXCEPTION:
+            PANIC("Received interrupt: INTERRUPT_NO_COPROCESSOR_EXCEPTION\n");
+            break;
+        case INTERRUPT_DOUBLE_FAULT:
+            PANIC("Received interrupt: INTERRUPT_DOUBLE_FAULT\n");
+            break;
+        case INTERRUPT_COPROCESSOR_SEGMENT_OVERRUN:
+            PANIC("Received interrupt: INTERRUPT_COPROCESSOR_SEGMENT_OVERRUN\n");
+            break;
+        case INTERRUPT_BAD_TSS:
+            PANIC("Received interrupt: INTERRUPT_BAD_TSS\n");
+            break;
+        case INTERRUPT_SEGMENT_NOT_PRESENT:
+            PANIC("Received interrupt: INTERRUPT_SEGMENT_NOT_PRESENT\n");
+            break;
+        case INTERRUPT_STACK_FAULT:
+            PANIC("Received interrupt: INTERRUPT_STACK_FAULT\n");
+            break;
+        case INTERRUPT_GENERAL_PROTECTION_FAULT:
+            PANIC("Received interrupt: INTERRUPT_GENERAL_PROTECTION_FAULT\n");
+            break;
+        case INTERRUPT_PAGE_FAULT:
+            PANIC("Received interrupt: INTERRUPT_PAGE_FAULT\n");
+            break;
+        case INTERRUPT_UNKNOWN_INTERRUPT_EXCEPTION:
+            PANIC("Received interrupt: INTERRUPT_UNKNOWN_INTERRUPT_EXCEPTION\n");
+            break;
+        case INTERRUPT_COPROCESSOR_FAULT:
+            PANIC("Received interrupt: INTERRUPT_COPROCESSOR_FAULT\n");
+            break;
+        case INTERRUPT_ALIGNMENT_CHECK_EXCEPTION:
+            PANIC("Received interrupt: INTERRUPT_ALIGNMENT_CHECK_EXCEPTION\n");
+            break;
+        case INTERRUPT_MACHINE_CHECK_EXCEPTION:
+            PANIC("Received interrupt: INTERRUPT_MACHINE_CHECK_EXCEPTION\n");
+            break;
+        case INTERRUPT_RESERVED_19:
+        case INTERRUPT_RESERVED_20:
+        case INTERRUPT_RESERVED_21:
+        case INTERRUPT_RESERVED_22:
+        case INTERRUPT_RESERVED_23:
+        case INTERRUPT_RESERVED_24:
+        case INTERRUPT_RESERVED_25:
+        case INTERRUPT_RESERVED_26:
+        case INTERRUPT_RESERVED_27:
+        case INTERRUPT_RESERVED_28:
+        case INTERRUPT_RESERVED_29:
+        case INTERRUPT_RESERVED_30:
+        case INTERRUPT_RESERVED_31:
+            PANIC("Reserved interrupt identifier received.");
+            break;
+    }
 }

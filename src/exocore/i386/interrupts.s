@@ -85,7 +85,7 @@ isr_common_stub:
     mov fs, ax
     mov gs, ax
 
-    ; Expects a signature like: void i386_isr_handler(registers_t regs)
+    ; Expects a signature like: void i386_isr_handler(interrupt_info_t)
     call i386_isr_handler
 
     ; Reload the original data segment descriptor.
