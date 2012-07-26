@@ -1,0 +1,38 @@
+#ifndef EXOCORE_H_PIC
+#define EXOCORE_H_PIC
+
+#define PIC_MASTER_COMMAND 0x20
+#define PIC_MASTER_DATA (PIC_MASTER_COMMAND + 1)
+
+#define PIC_SLAVE_COMMAND 0xa0
+#define PIC_SLAVE_DATA (PIC_SLAVE_COMMAND + 1)
+
+#define PIC_ICW1_ICW4 0x01
+#define PIC_ICW1_SINGLE 0x02
+#define PIC_ICW1_INTERVAL_4 0x04
+#define PIC_ICW1_LEVEL 0x08
+#define PIC_ICW1_INITIALIZE 0x10
+#define PIC_ICW1_A5 0x20
+#define PIC_ICW1_A6 0x40
+#define PIC_ICW1_A7 0x80
+
+#define PIC_ICW4_8086 0x01
+#define PIC_ICW4_AUTOMATIC 0x02
+#define PIC_ICW4_MASTER 0x04
+#define PIC_ICW4_BUFFERED 0x08
+#define PIC_ICW4_SFNM 0x10
+
+#define PIC_OCW2_L0 0x01
+#define PIC_OCW2_L1 0x02
+#define PIC_OCW2_L2 0x04
+#define PIC_OCW2_EOI 0x20
+#define PIC_OCW2_SL 0x40
+#define PIC_OCW2_R 0x80
+
+#define PIC_OCW3_RIS 0x01
+#define PIC_OCW3_RR 0x02
+#define PIC_OCW3_P 0x04
+#define PIC_OCW3_SMM 0x20
+#define PIC_OCW3_ESMM 0x40
+
+#endif
