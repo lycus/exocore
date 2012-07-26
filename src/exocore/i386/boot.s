@@ -6,13 +6,10 @@ extern start
 extern edata
 extern end
 
-; Export the loader routine (our entry point).
-global i386_loader
-
 MAGIC equ 0x1badb002 ; Multiboot magic number.
 FLAGS equ 0x00010003 ; Multiboot module flags (we require memory info and module page alignment).
-CHECKSUM equ -(MAGIC + FLAGS)
-STACK_SIZE equ 0x4000
+CHECKSUM equ -(MAGIC + FLAGS) ; Fabulous Multiboot checksum.
+STACK_SIZE equ 0x4000 ; Size of the kernel execution stack.
 
 section .text
 
@@ -32,6 +29,8 @@ header:
     dd edata
     dd end
     dd i386_loader
+
+global i386_loader
 
 i386_loader:
 

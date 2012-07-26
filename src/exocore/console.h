@@ -26,7 +26,7 @@ typedef enum console_color
 void console_print_char(const console_color_t fg, const console_color_t bg, const char character);
 attr(nonnull) void console_print(const console_color_t fg, const console_color_t bg, const char* const message);
 
-void console_clear();
+void console_clear(void);
 
 void console_scroll_display(const ui8 lines);
 
