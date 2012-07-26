@@ -74,8 +74,8 @@ void console_scroll_display(const ui8 lines)
     }
 
     ui8 current_y = 0;
-    ui8 offset1 = 0;
-    ui8 offset2 = lines * CONSOLE_COLUMNS;
+    ui16 offset1 = 0;
+    ui16 offset2 = lines * CONSOLE_COLUMNS;
 
     for (; current_y <= CONSOLE_LINES - lines; current_y++)
     {
