@@ -30,4 +30,11 @@ typedef _Bool bool;
 
 #define attr(X) __attribute__((X))
 
+#define _STRINGIFY(X) #X
+#define STRINGIFY(X) _STRINGIFY(X)
+
+attr(noreturn) void panic(const char* const message);
+
+#define PANIC(MSG) panic("Kernel panic at " __FILE__ ":" STRINGIFY(__LINE__) ": " MSG)
+
 #endif
