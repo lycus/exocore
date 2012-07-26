@@ -1,9 +1,9 @@
 section .text
 
-global io_read_ui8
+global i386_io_read_ui8
 
 align 4
-io_read_ui8:
+i386_io_read_ui8:
 
     mov dx, [esp + 4] ; Port is the first argument.
 
@@ -12,10 +12,10 @@ io_read_ui8:
 
     ret
 
-global io_read_ui16
+global i386_io_read_ui16
 
 align 4
-io_read_ui16:
+i386_io_read_ui16:
 
     mov dx, [esp + 4] ; Port is the first argument.
 
@@ -24,10 +24,10 @@ io_read_ui16:
 
     ret
 
-global io_read_ui32
+global i386_io_read_ui32
 
 align 4
-io_read_ui32:
+i386_io_read_ui32:
 
     mov dx, [esp + 4] ; Port is the first argument.
 
@@ -36,10 +36,10 @@ io_read_ui32:
 
     ret
 
-global io_write_ui8
+global i386_io_write_ui8
 
 align 4
-io_write_ui8:
+i386_io_write_ui8:
 
     mov al, [esp + 8] ; Value is the second argument.
     mov dx, [esp + 4] ; Port is the first argument.
@@ -49,10 +49,10 @@ io_write_ui8:
 
     ret
 
-global io_write_ui16
+global i386_io_write_ui16
 
 align 4
-io_write_ui16:
+i386_io_write_ui16:
 
     mov ax, [esp + 8] ; Value is the second argument.
     mov dx, [esp + 4] ; Port is the first argument.
@@ -62,10 +62,10 @@ io_write_ui16:
 
     ret
 
-global io_write_ui32
+global i386_io_write_ui32
 
 align 4
-io_write_ui32:
+i386_io_write_ui32:
 
     mov eax, [esp + 8] ; Value is the second argument.
     mov dx, [esp + 4] ; Port is the first argument.
@@ -75,10 +75,10 @@ io_write_ui32:
 
     ret
 
-global io_wait
+global i386_io_wait
 
 align 4
-io_wait:
+i386_io_wait:
 
     ; We assume the 0x80 port to be free.
     out 0x80, al

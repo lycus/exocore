@@ -1,6 +1,6 @@
 #include "exocore/console.h"
-#include "exocore/io.h"
 #include "exocore/i386/descriptors.h"
+#include "exocore/i386/io.h"
 #include "exocore/i386/pic.h"
 
 static gdt_entry_t gdt[GDT_SIZE] attr(aligned(8)); // The global descriptor table.
@@ -76,30 +76,30 @@ static void remap_irq(void)
 {
     INFO("Remapping i386 IRQs... ");
 
-    io_write_ui8(PIC_MASTER_COMMAND, PIC_ICW1_ICW4 | PIC_ICW1_INITIALIZE);
-    io_wait();
-    io_write_ui8(PIC_SLAVE_COMMAND, PIC_ICW1_ICW4 | PIC_ICW1_INITIALIZE);
-    io_wait();
+    i386_io_write_ui8(PIC_MASTER_COMMAND, PIC_ICW1_ICW4 | PIC_ICW1_INITIALIZE);
+    i386_io_wait();
+    i386_io_write_ui8(PIC_SLAVE_COMMAND, PIC_ICW1_ICW4 | PIC_ICW1_INITIALIZE);
+    i386_io_wait();
 
-    io_write_ui8(PIC_MASTER_DATA, ISR_IRQ_MASTER_START);
-    io_wait();
-    io_write_ui8(PIC_SLAVE_DATA, ISR_IRQ_SLAVE_START);
-    io_wait();
+    i386_io_write_ui8(PIC_MASTER_DATA, ISR_IRQ_MASTER_START);
+    i386_io_wait();
+    i386_io_write_ui8(PIC_SLAVE_DATA, ISR_IRQ_SLAVE_START);
+    i386_io_wait();
 
-    io_write_ui8(PIC_MASTER_DATA, 0x04);
-    io_wait();
-    io_write_ui8(PIC_SLAVE_DATA, 0x02);
-    io_wait();
+    i386_io_write_ui8(PIC_MASTER_DATA, 0x04);
+    i386_io_wait();
+    i386_io_write_ui8(PIC_SLAVE_DATA, 0x02);
+    i386_io_wait();
 
-    io_write_ui8(PIC_MASTER_DATA, PIC_ICW4_8086);
-    io_wait();
-    io_write_ui8(PIC_SLAVE_DATA, PIC_ICW4_8086);
-    io_wait();
+    i386_io_write_ui8(PIC_MASTER_DATA, PIC_ICW4_8086);
+    i386_io_wait();
+    i386_io_write_ui8(PIC_SLAVE_DATA, PIC_ICW4_8086);
+    i386_io_wait();
 
-    io_write_ui8(PIC_MASTER_DATA, 0x00);
-    io_wait();
-    io_write_ui8(PIC_SLAVE_DATA, 0x00);
-    io_wait();
+    i386_io_write_ui8(PIC_MASTER_DATA, 0x00);
+    i386_io_wait();
+    i386_io_write_ui8(PIC_SLAVE_DATA, 0x00);
+    i386_io_wait();
 
     SUCCESS("OK.\n");
 }

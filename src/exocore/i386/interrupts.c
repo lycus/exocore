@@ -1,7 +1,7 @@
 #include "exocore/console.h"
-#include "exocore/io.h"
 #include "exocore/i386/descriptors.h"
 #include "exocore/i386/interrupts.h"
+#include "exocore/i386/io.h"
 #include "exocore/i386/pic.h"
 
 static isr_t interrupt_handlers[IDT_SIZE];
@@ -145,9 +145,13 @@ void i386_isr_handler(const interrupt_info_t info)
 void i386_irq_handler(const interrupt_info_t info)
 {
     if (info.id >= INTERRUPT_IRQ_CMOS_CLOCK)
-        io_write_ui8(PIC_SLAVE_COMMAND, PIC_OCW2_EOI);
+    {
+        i386_io_write_ui8(PIC_SLAVE_COMMAND, PIC_OCW2_EOI);
+        i386_io_wait();
+    }
 
-    io_write_ui8(PIC_MASTER_COMMAND, PIC_OCW2_EOI);
+    i386_io_write_ui8(PIC_MASTER_COMMAND, PIC_OCW2_EOI);
+    i386_io_wait();
 
     // Just handle stuff in the ISR handler.
     i386_isr_handler(info);
