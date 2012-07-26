@@ -1,6 +1,6 @@
 #include "i386/descriptors.h"
 
-bool architecture_initialize(void)
+bool initialize_architecture(void)
 {
     i386_initialize_descriptors();
 

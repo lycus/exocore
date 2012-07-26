@@ -4,6 +4,6 @@
 #include "common.h"
 
 // Performs any architecture-specific initialization.
-bool architecture_initialize(void);
+bool initialize_architecture(void);
 
 #endif

@@ -18,7 +18,7 @@ void kmain(const ui32 magic, const multiboot_info_t* const info attr(unused))
 
     console_print(CONSOLE_COLOR_WHITE, CONSOLE_COLOR_BLACK, "Initializing target architecture...");
 
-    if (!architecture_initialize())
+    if (!initialize_architecture())
     {
         console_print(CONSOLE_COLOR_RED, CONSOLE_COLOR_BLACK, " Failed.\n");
         return;
