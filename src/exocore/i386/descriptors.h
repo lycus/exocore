@@ -37,4 +37,10 @@ typedef struct idt_pointer
 // Initializes the GDT and IDT.
 void i386_initialize_descriptors(void);
 
+// Number of entries in the global descriptor table.
+#define GDT_SIZE 5
+
+// Number of entries in the interrupt descriptor table.
+#define IDT_SIZE 256
+
 #endif

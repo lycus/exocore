@@ -117,3 +117,71 @@ isr_common_stub:
 
     ; Return from the ISR.
     iret
+
+; Helper macro for defining IRQs.
+%macro irq 2
+    global i386_irq_%1
+
+    i386_irq_%1:
+
+        cli
+
+        push byte 0
+        push byte %2
+
+        jmp irq_common_stub
+%endmacro
+
+irq 0, 32
+irq 1, 33
+irq 2, 34
+irq 3, 35
+irq 4, 36
+irq 5, 37
+irq 6, 38
+irq 7, 39
+irq 8, 40
+irq 9, 41
+irq 10, 42
+irq 11, 43
+irq 12, 44
+irq 13, 45
+irq 14, 46
+irq 15, 47
+
+; C function for handling IRQs.
+extern i386_irq_handler
+
+irq_common_stub:
+
+    ; Save all GPRs.
+    pushad
+
+    ; Back up the data segment descriptor.
+    mov ax, ds
+    push eax
+
+    ; Load the kernel data segment descriptor.
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    call i386_irq_handler
+
+    ; Reload the original data segment descriptor.
+    pop eax
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+
+    popad ; Pop all backed-up GPRs.
+    add esp, 8 ; Pop the interrupt identifier and error code.
+
+    ; Enable interrupts.
+    sti
+
+    ; Return from the IRQ.
+    iret
