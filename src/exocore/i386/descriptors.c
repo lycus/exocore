@@ -1,7 +1,7 @@
 #include "exocore/console.h"
 #include "exocore/io.h"
-#include "exocore/pic.h"
 #include "exocore/i386/descriptors.h"
+#include "exocore/i386/pic.h"
 
 static gdt_entry_t gdt[GDT_SIZE] attr(aligned(8)); // The global descriptor table.
 static gdt_pointer_t gdt_pointer attr(aligned(8)); // Pointer to the GDT.

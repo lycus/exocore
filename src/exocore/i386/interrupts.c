@@ -1,8 +1,8 @@
 #include "exocore/console.h"
 #include "exocore/io.h"
-#include "exocore/pic.h"
 #include "exocore/i386/descriptors.h"
 #include "exocore/i386/interrupts.h"
+#include "exocore/i386/pic.h"
 
 static isr_t interrupt_handlers[IDT_SIZE];
 
