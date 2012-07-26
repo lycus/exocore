@@ -40,7 +40,7 @@ i386_idt_flush:
     ; Load the IDT.
     lidt [eax]
 
-    ; Enable interrupts.
-    sti
+    ; TODO: Enable interrupts.
+    ; sti
 
     ret
