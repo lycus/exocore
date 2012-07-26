@@ -3,9 +3,10 @@
 
 void panic(const char* const message)
 {
-    disable_interrupts();
+    ASSERT(message);
 
     ERROR(message);
 
+    disable_interrupts();
     halt_machine();
 }

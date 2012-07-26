@@ -47,6 +47,8 @@ void console_print_char(const console_color_t fg, const console_color_t bg, cons
 
 void console_print(const console_color_t fg, const console_color_t bg, const char* const message)
 {
+    ASSERT(message);
+
     for (const char* ptr = message; *ptr; ptr++)
         console_print_char(fg, bg, *ptr);
 }

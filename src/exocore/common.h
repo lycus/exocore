@@ -37,4 +37,16 @@ attr(noreturn) void panic(const char* const message);
 
 #define PANIC(MSG) panic("Kernel panic at " __FILE__ ":" STRINGIFY(__LINE__) ": " MSG)
 
+#ifdef EXOCORE_DEBUG
+#    define ASSERT(CND) \
+         do \
+         { \
+             if (!(CND)) \
+                 PANIC("Assertion failed: " STRINGIFY(CND)); \
+         } \
+         while (false);
+#else
+#    define ASSERT(CND)
+#endif
+
 #endif

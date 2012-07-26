@@ -138,6 +138,8 @@ static void initialize_gdt(void)
 
 static void idt_set_descriptor(uiptr index, void (* base)(void), ui16 selector, ui8 flags)
 {
+    ASSERT(base);
+
     uiptr addr = (uiptr)base;
 
     idt[index].base_low = addr & 0xffff;

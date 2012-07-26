@@ -2,8 +2,10 @@
 #include "exocore/console.h"
 #include "exocore/boot/multiboot.h"
 
-void kmain(const ui32 magic, const multiboot_info_t* const info attr(unused))
+void kmain(const ui32 magic, const multiboot_info_t* const info)
 {
+    ASSERT(info);
+
     CLEAR();
 
     INFO("Verifying bootloader sanity... ");
