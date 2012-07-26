@@ -17,4 +17,6 @@ void io_write_ui32(ui16 port, ui32 value);
 void enable_interrupts(void);
 void disable_interrupts(void);
 
+attr(noreturn) void halt_machine(void);
+
 #endif

@@ -89,11 +89,15 @@ i386_loader:
     ; Disable interrupts once the kernel exits.
     cli
 
-.hang:
-
     ; Make the machine hang if the kernel returns.
+    jmp halt_machine
+
+global halt_machine
+
+halt_machine:
+
     hlt
-    jmp .hang
+    jmp halt_machine
 
 section .bss
 
