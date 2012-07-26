@@ -143,13 +143,16 @@ def configure(conf):
         conf.fatal('--mode must be either debug or release.')
 
 def build(bld):
-    def search_paths(path, ext):
-        return [os.path.join(path, ext), os.path.join(path, '**', ext)]
+    def search_paths(*k, **kw):
+        path = os.path.join(*k, **kw)
+
+        return [os.path.join(path, '*.c'), os.path.join(path, '*.s')]
 
     bld(features = 'asm c kernel',
         includes = SRC,
-        source = bld.path.ant_glob(search_paths(SRC, '*.c') +
-                                   search_paths(os.path.join(SRC, bld.env.TARGET), '*.s')),
+        source = bld.path.ant_glob(search_paths(SRC) +
+                                   search_paths(SRC, 'boot') +
+                                   search_paths(SRC, bld.env.TARGET)),
         target = TGT)
 
 class DistCheckContext(Scripting.Dist):
