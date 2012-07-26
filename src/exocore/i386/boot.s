@@ -81,7 +81,19 @@ i386_loader:
     mov cr4, ecx
 
     ; Set up the GDT.
-    lgdt [gdt]
+    lgdt [gdt_header]
+
+    ; Load segment selectors.
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    mov ss, ax
+
+    jmp 0x08:.main
+
+.main:
 
     ; Nullify the stack frame pointer.
     xor ebp, ebp
@@ -97,37 +109,18 @@ i386_loader:
 
 align 4096 ; The GDT must be aligned on a page boundary.
 
-gdt:
+gdt_header:
 
     dw gdt_end - gdt_table - 1
     dd gdt_table
 
 gdt_table:
 
-    struc gdt_entry_struc
-
-        limit_low: resb 2
-        base_low: resb 2
-        base_middle: resb 1
-        access: resb 1
-        granularity: resb 1
-        base_high: resb 1
-
-    endstruc
-
-    ; The null descriptor.
-    istruc gdt_entry_struc
-
-        at limit_low, db 0, 0
-        at base_low, db 0, 0
-        at base_middle, db 0
-        at access, db 0
-        at granularity, db 0
-        at base_high, db 0
-
-    iend
-
-    ; TODO: Add the rest of the entries.
+    dq 0x0000000000000000 ; The null descriptor.
+    dq 0x00CF9A000000FFFF ; Ring 0 code segment.
+    dq 0x00CF92000000FFFF ; Ring 0 data segment.
+    dq 0x00CFFA000000FFFF ; Ring 3 code segment.
+    dq 0x00CFF2000000FFFF ; Ring 3 data segment.
 
 gdt_end:
 
