@@ -47,7 +47,7 @@ void console_print(const console_color_t fg, const console_color_t bg, const cha
 
 void console_clear(void)
 {
-    for (ui16 i = 0; i < CONSOLE_COLUMNS * CONSOLE_LINES; i++)
+    for (ui16 i = 0; i < CONSOLE_COLUMNS * CONSOLE_LINES * 2; i++)
         *(CONSOLE_VIDEO_ADDRESS + i) = 0;
 
     console_position_x = 0;
