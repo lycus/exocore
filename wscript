@@ -53,6 +53,7 @@ def configure(conf):
     conf.find_program('ld', var = 'LD')
 
     if conf.options.target == 'i386' or conf.options.target == 'x86_64':
+        conf.find_program('yasm', var = 'AS')
         conf.load('nasm')
 
         add_options('ASFLAGS',

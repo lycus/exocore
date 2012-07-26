@@ -42,7 +42,7 @@ i386_loader:
     mov esp, stack + STACK_SIZE
 
     ; Pass Multiboot bootloader information.
-    push ebx,
+    push ebx
     push eax
 
     xor eax, eax
