@@ -6,6 +6,12 @@
 // Number of lines on the console screen.
 #define CONSOLE_LINES 24
 
+// The default foreground color.
+#define CONSOLE_FOREGROUND CONSOLE_COLOR_WHITE
+
+// The default background color.
+#define CONSOLE_BACKGROUND CONSOLE_COLOR_GREY
+
 #ifdef EXOCORE_IS_32_BIT
 #    define CONSOLE_VIDEO_ADDRESS ((volatile ui8*)0x000b8000)
 #else
@@ -47,8 +53,11 @@ void console_print(const console_color_t fg, const console_color_t bg, const cha
 
 void console_clear(void)
 {
-    for (ui16 i = 0; i < CONSOLE_COLUMNS * CONSOLE_LINES * 2; i++)
-        *(CONSOLE_VIDEO_ADDRESS + i) = 0;
+    for (ui16 i = 0; i < CONSOLE_COLUMNS * CONSOLE_LINES; i++)
+    {
+        *(CONSOLE_VIDEO_ADDRESS + i * 2) = 0x00;
+        *(CONSOLE_VIDEO_ADDRESS + i * 2 + 1) = (CONSOLE_FOREGROUND & 0x0f) | (ui8)(CONSOLE_BACKGROUND << 4);
+    }
 
     console_position_x = 0;
     console_position_y = 0;
@@ -82,7 +91,7 @@ void console_scroll_display(const ui8 lines)
         for (ui8 current_x = 0; current_x < CONSOLE_COLUMNS; current_x++)
         {
             *(CONSOLE_VIDEO_ADDRESS + (current_x + offset1) * 2) = 0x00;
-            *(CONSOLE_VIDEO_ADDRESS + (current_x + offset1) * 2 + 1) = 0x00;
+            *(CONSOLE_VIDEO_ADDRESS + (current_x + offset1) * 2 + 1) = (CONSOLE_FOREGROUND & 0x0f) | (ui8)(CONSOLE_BACKGROUND << 4);
         }
     }
 
