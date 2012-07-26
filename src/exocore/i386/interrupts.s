@@ -1,9 +1,8 @@
 section .text
 
-align 4
-
 global enable_interrupts
 
+align 4
 enable_interrupts:
 
     sti
@@ -11,6 +10,7 @@ enable_interrupts:
 
 global disable_interrupts
 
+align 4
 disable_interrupts:
 
     cli
@@ -20,6 +20,7 @@ disable_interrupts:
 %macro isr_no_error 1
     global i386_isr_%1
 
+    align 4
     i386_isr_%1:
 
         ; Disable interrupts.
@@ -36,6 +37,7 @@ disable_interrupts:
 %macro isr_error 1
     global i386_isr_%1
 
+    align 4
     i386_isr_%1:
 
         ; Disable interrupts.
@@ -83,6 +85,7 @@ isr_no_error 31
 ; C function for handling interrupts.
 extern i386_isr_handler
 
+align 4
 isr_common_stub:
 
     ; Save all GPRs.
@@ -122,6 +125,7 @@ isr_common_stub:
 %macro irq 2
     global i386_irq_%1
 
+    align 4
     i386_irq_%1:
 
         cli
@@ -152,6 +156,7 @@ irq 15, 47
 ; C function for handling IRQs.
 extern i386_irq_handler
 
+align 4
 irq_common_stub:
 
     ; Save all GPRs.

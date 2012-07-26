@@ -14,7 +14,6 @@ STACK_SIZE equ 0x4000 ; Size of the kernel execution stack.
 section .text
 
 align 4
-
 header:
 
     ; Multiboot-compliant header.
@@ -32,6 +31,7 @@ header:
 
 global i386_loader
 
+align 4
 i386_loader:
 
     ; Disable interrupts. We enable interrupts once we
@@ -88,6 +88,7 @@ i386_loader:
 
 global halt_machine
 
+align 4
 halt_machine:
 
     hlt
@@ -96,5 +97,4 @@ halt_machine:
 section .bss
 
 align 4
-
 stack: resb STACK_SIZE
