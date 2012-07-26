@@ -1,7 +1,7 @@
 #ifndef EXOCORE_H_I386_DESCRIPTORS
 #define EXOCORE_H_I386_DESCRIPTORS
 
-#include "common.h"
+#include "exocore/common.h"
 
 typedef struct gdt_entry
 {

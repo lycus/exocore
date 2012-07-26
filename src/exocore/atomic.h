@@ -1,7 +1,7 @@
 #ifndef EXOCORE_H_ATOMIC
 #define EXOCORE_H_ATOMIC
 
-#include "common.h"
+#include "exocore/common.h"
 
 #define atomic_fence() __atomic_thread_fence(__ATOMIC_SEQ_CST)
 

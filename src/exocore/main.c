@@ -1,6 +1,6 @@
-#include "arch.h"
-#include "console.h"
-#include "boot/multiboot.h"
+#include "exocore/arch.h"
+#include "exocore/console.h"
+#include "exocore/boot/multiboot.h"
 
 void kmain(const ui32 magic, const multiboot_info_t* const info attr(unused))
 {

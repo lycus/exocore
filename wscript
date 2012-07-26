@@ -150,7 +150,7 @@ def build(bld):
         return [os.path.join(path, '*.c'), os.path.join(path, '*.s')]
 
     bld(features = 'asm c kernel',
-        includes = SRC,
+        includes = 'src',
         source = bld.path.ant_glob(search_paths(SRC) +
                                    search_paths(SRC, 'boot') +
                                    search_paths(SRC, bld.env.TARGET)),

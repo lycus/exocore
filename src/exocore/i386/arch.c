@@ -1,4 +1,4 @@
-#include "i386/descriptors.h"
+#include "exocore/i386/descriptors.h"
 
 bool initialize_architecture(void)
 {

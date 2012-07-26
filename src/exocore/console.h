@@ -1,7 +1,7 @@
 #ifndef EXOCORE_H_CONSOLE
 #define EXOCORE_H_CONSOLE
 
-#include "common.h"
+#include "exocore/common.h"
 
 typedef enum console_color : ui8
 {

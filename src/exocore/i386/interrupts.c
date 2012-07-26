@@ -1,4 +1,4 @@
-#include "console.h"
+#include "exocore/console.h"
 
 typedef enum interrupt_id : ui32
 {

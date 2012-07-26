@@ -1,5 +1,5 @@
-#include "arch.h"
-#include "console.h"
+#include "exocore/arch.h"
+#include "exocore/console.h"
 
 void panic(const char* const message)
 {

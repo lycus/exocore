@@ -1,4 +1,4 @@
-#include "console.h"
+#include "exocore/console.h"
 
 // Number of columns on the console screen.
 #define CONSOLE_COLUMNS 80

@@ -1,7 +1,7 @@
 #ifndef EXOCORE_H_BOOT_MULTIBOOT
 #define EXOCORE_H_BOOT_MULTIBOOT
 
-#include <common.h>
+#include "exocore/common.h"
 
 // The magic number of the Multiboot header.
 #define MULTIBOOT_HEADER_MAGIC 0x1badb002
