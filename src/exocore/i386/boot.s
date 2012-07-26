@@ -15,6 +15,7 @@ CHECKSUM equ -(MAGIC + FLAGS)
 STACK_SIZE equ 0x4000
 
 section .text
+
 align 4
 
 header:
@@ -79,6 +80,9 @@ i386_loader:
 
     mov cr4, ecx
 
+    ; Set up the GDT.
+    lgdt [gdt]
+
     ; Nullify the stack frame pointer.
     xor ebp, ebp
 
@@ -91,7 +95,44 @@ i386_loader:
     hlt
     jmp .hang
 
+align 4096 ; The GDT must be aligned on a page boundary.
+
+gdt:
+
+    dw gdt_end - gdt_table - 1
+    dd gdt_table
+
+gdt_table:
+
+    struc gdt_entry_struc
+
+        limit_low: resb 2
+        base_low: resb 2
+        base_middle: resb 1
+        access: resb 1
+        granularity: resb 1
+        base_high: resb 1
+
+    endstruc
+
+    ; The null descriptor.
+    istruc gdt_entry_struc
+
+        at limit_low, db 0, 0
+        at base_low, db 0, 0
+        at base_middle, db 0
+        at access, db 0
+        at granularity, db 0
+        at base_high, db 0
+
+    iend
+
+    ; TODO: Add the rest of the entries.
+
+gdt_end:
+
 section .bss
+
 align 4
 
 stack: resb STACK_SIZE
