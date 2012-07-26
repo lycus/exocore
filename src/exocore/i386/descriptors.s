@@ -13,7 +13,7 @@ i386_gdt_flush:
     lgdt [eax]
 
     ; Load segment selectors.
-    mov ax, 0x10,
+    mov ax, 0x10
     mov ds, ax
     mov es, ax
     mov fs, ax
