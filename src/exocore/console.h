@@ -30,4 +30,19 @@ void console_clear(void);
 
 void console_scroll_display(const ui8 lines);
 
+#define _PRINT(MSG, CLR) console_print(CLR, CONSOLE_COLOR_GREY, MSG);
+
+#define INFO(MSG) _PRINT(MSG, CONSOLE_COLOR_WHITE)
+#define SUCCESS(MSG) _PRINT(MSG, CONSOLE_COLOR_LIGHT_GREEN)
+#define WARNING(MSG) _PRINT(MSG, CONSOLE_COLOR_LIGHT_YELLOW)
+#define ERROR(MSG) _PRINT(MSG, CONSOLE_COLOR_LIGHT_RED)
+
+#ifdef EXOCORE_DEBUG
+#    define DEBUG(MSG) INFO(MSG)
+#else
+#    define DEBUG(MSG)
+#endif
+
+#define CLEAR() console_clear()
+
 #endif
