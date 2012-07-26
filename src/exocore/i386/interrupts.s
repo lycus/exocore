@@ -96,7 +96,7 @@ isr_common_stub:
     mov gs, ax
 
     popad ; Pop all backed-up GPRs.
-    add esp, 4 ; Pop the interrupt identifier and error code.
+    add esp, 8 ; Pop the interrupt identifier and error code.
 
     ; Enable interrupts.
     sti
