@@ -1,3 +1,4 @@
+#include "console.h"
 #include "i386/descriptors.h"
 
 #define GDT_SIZE 5
@@ -65,6 +66,8 @@ static void gdt_set_descriptor(uiptr index, ui32 base, ui32 limit, ui8 access, u
 
 static void initialize_gdt(void)
 {
+    INFO("Initializing i386 global descriptor table... ");
+
     gdt_pointer.limit = sizeof(gdt_entry_t) * GDT_SIZE - 1;
     gdt_pointer.base = &gdt[0];
 
@@ -75,9 +78,11 @@ static void initialize_gdt(void)
     gdt_set_descriptor(4, 0, 0xffffffff, 0xf2, 0xcf); // User mode data segment.
 
     i386_gdt_flush(&gdt_pointer);
+
+    SUCCESS("OK.\n");
 }
 
-static void idt_set_descriptor(uiptr index, void (*base)(void), ui16 selector, ui8 flags)
+static void idt_set_descriptor(uiptr index, void (* base)(void), ui16 selector, ui8 flags)
 {
     uiptr addr = (uiptr)base;
 
@@ -93,6 +98,8 @@ static void idt_set_descriptor(uiptr index, void (*base)(void), ui16 selector, u
 
 static void initialize_idt(void)
 {
+    INFO("Initializing i386 interrupt descriptor table... ");
+
     idt_pointer.limit = sizeof(idt_entry_t) * IDT_SIZE - 1;
     idt_pointer.base = &idt[0];
 
@@ -130,6 +137,8 @@ static void initialize_idt(void)
     idt_set_descriptor(31, &i386_isr_31, 0x0008, 0x8e);
 
     i386_idt_flush(&idt_pointer);
+
+    SUCCESS("OK.\n");
 }
 
 void i386_initialize_descriptors(void)

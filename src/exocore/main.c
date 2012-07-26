@@ -16,9 +16,11 @@ void kmain(const ui32 magic, const multiboot_info_t* const info attr(unused))
     else
         SUCCESS("OK.\n");
 
+    bool result = initialize_architecture();
+
     INFO("Initializing target architecture... ");
 
-    if (!initialize_architecture())
+    if (!result)
     {
         ERROR("Failed.\n");
         return;
