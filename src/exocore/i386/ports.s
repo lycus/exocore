@@ -39,8 +39,8 @@ global io_write_ui8
 
 io_write_ui8:
 
-    mov al, [esp + 4] ; Value is the second argument.
-    mov dx, [esp + 8] ; Port is the first argument.
+    mov al, [esp + 8] ; Value is the second argument.
+    mov dx, [esp + 4] ; Port is the first argument.
 
     ; Write a byte to the port in dx.
     out dx, al
@@ -51,8 +51,8 @@ global io_write_ui16
 
 io_write_ui16:
 
-    mov ax, [esp + 4] ; Value is the second argument.
-    mov dx, [esp + 8] ; Port is the first argument.
+    mov ax, [esp + 8] ; Value is the second argument.
+    mov dx, [esp + 4] ; Port is the first argument.
 
     ; Write a word to the port in dx.
     out dx, ax
@@ -63,8 +63,8 @@ global io_write_ui32
 
 io_write_ui32:
 
-    mov eax, [esp + 4] ; Value is the second argument.
-    mov dx, [esp + 8] ; Port is the first argument.
+    mov eax, [esp + 8] ; Value is the second argument.
+    mov dx, [esp + 4] ; Port is the first argument.
 
     ; Write a dword to the port in dx.
     out dx, eax
