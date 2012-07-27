@@ -1,14 +1,15 @@
 ; The kernel main routine.
 extern kmain
 
-; These are defined in the linker script.
-extern start
-extern edata
-extern end
+MULTIBOOT_PAGE_ALIGNMENT equ 1 << 0
+MULTIBOOT_MEMORY_INFO equ 1 << 1
+MULTIBOOT_VIDEO_MODE equ 1 << 2
+MULTIBOOT_AOUT_KLUDGE equ 1 << 16
 
-MAGIC equ 0x1badb002 ; Multiboot magic number.
-FLAGS equ 0x00010003 ; Multiboot module flags (we require memory info and module page alignment).
-CHECKSUM equ -(MAGIC + FLAGS) ; Fabulous Multiboot checksum.
+MULTIBOOT_MAGIC equ 0x1badb002 ; Multiboot magic number.
+MULTIBOOT_FLAGS equ MULTIBOOT_PAGE_ALIGNMENT | MULTIBOOT_MEMORY_INFO ; Multiboot module flags.
+MULTIBOOT_CHECKSUM equ -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS) ; Fabulous Multiboot checksum.
+
 STACK_SIZE equ 0x4000 ; Size of the kernel execution stack.
 
 section .text
@@ -17,17 +18,9 @@ align 4
 header:
 
     ; Multiboot-compliant header.
-    dd MAGIC
-    dd FLAGS
-    dd CHECKSUM
-
-    ; Strictly speaking, we would only need these if we defined bit 16 in the
-    ; header above. We keep them around just in case.
-    dd header
-    dd start
-    dd edata
-    dd end
-    dd kernel_loader
+    dd MULTIBOOT_MAGIC
+    dd MULTIBOOT_FLAGS
+    dd MULTIBOOT_CHECKSUM
 
 global kernel_loader
 
