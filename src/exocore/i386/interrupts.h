@@ -75,7 +75,7 @@ typedef struct interrupt_info
     const ui32 user_ss;
 } attr(packed) interrupt_info_t;
 
-typedef void (* isr_t)(const interrupt_info_t);
+typedef void (^ isr_t)(const interrupt_info_t);
 
 void set_interrupt_handler(const interrupt_id_t id, const isr_t handler);
 
