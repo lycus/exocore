@@ -57,6 +57,9 @@ def configure(conf):
         conf.load('nasm')
 
         add_options('ASFLAGS',
+                    ['-DEXOCORE_TARGET_{0}'.format(conf.options.target.upper())])
+
+        add_options('ASFLAGS',
                     ['-f',
                      'elf'])
 
