@@ -27,12 +27,12 @@ header:
     dd start
     dd edata
     dd end
-    dd i386_loader
+    dd kernel_loader
 
-global i386_loader
+global kernel_loader
 
 align 4
-i386_loader:
+kernel_loader:
 
     ; Disable interrupts. We enable interrupts once we
     ; initialize the IDT during target architecture init.
@@ -85,14 +85,6 @@ i386_loader:
     ; Start the kernel. Remember to keep the stack balanced at this point.
     ; Expects a signature like: void kmain(ui32, multiboot_info*)
     call kmain
-
-global halt_machine
-
-align 4
-halt_machine:
-
-    hlt
-    jmp halt_machine
 
 section .bss
 

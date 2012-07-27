@@ -1,6 +1,9 @@
-#include "exocore/arch.h"
 #include "exocore/console.h"
-#include "exocore/boot/multiboot.h"
+#include "exocore/descriptors.h"
+#include "exocore/interrupts.h"
+#include "exocore/machine.h"
+#include "exocore/multiboot.h"
+#include "exocore/timer.h"
 
 void kmain(const ui32 magic, const multiboot_info_t* const info)
 {
@@ -18,7 +21,10 @@ void kmain(const ui32 magic, const multiboot_info_t* const info)
     else
         SUCCESS("OK.\n");
 
-    initialize_architecture();
+    initialize_gdt();
+    initialize_irq();
+    initialize_idt();
+    initialize_pit();
 
     INFO("\n");
     SUCCESS("Kernel booted successfully.\n");

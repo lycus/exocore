@@ -1,5 +1,6 @@
-#include "exocore/arch.h"
 #include "exocore/console.h"
+#include "exocore/interrupts.h"
+#include "exocore/machine.h"
 
 void panic(const char* const message)
 {

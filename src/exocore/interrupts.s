@@ -18,10 +18,10 @@ disable_interrupts:
 
 ; Helper macro for defining ISRs with no error codes.
 %macro isr_no_error 1
-    global i386_isr_%1
+    global isr_%1
 
     align 4
-    i386_isr_%1:
+    isr_%1:
 
         ; Disable interrupts.
         cli
@@ -35,10 +35,10 @@ disable_interrupts:
 
 ; Helper macro for defining ISRs with error codes.
 %macro isr_error 1
-    global i386_isr_%1
+    global isr_%1
 
     align 4
-    i386_isr_%1:
+    isr_%1:
 
         ; Disable interrupts.
         cli
@@ -83,7 +83,7 @@ isr_no_error 30
 isr_no_error 31
 
 ; C function for handling interrupts.
-extern i386_isr_handler
+extern isr_handler
 
 align 4
 isr_common_stub:
@@ -102,8 +102,8 @@ isr_common_stub:
     mov fs, ax
     mov gs, ax
 
-    ; Expects a signature like: void i386_isr_handler(interrupt_info_t)
-    call i386_isr_handler
+    ; Expects a signature like: void isr_handler(interrupt_info_t)
+    call isr_handler
 
     ; Reload the original data segment descriptor.
     pop eax
@@ -123,10 +123,10 @@ isr_common_stub:
 
 ; Helper macro for defining IRQs.
 %macro irq 2
-    global i386_irq_%1
+    global irq_%1
 
     align 4
-    i386_irq_%1:
+    irq_%1:
 
         cli
 
@@ -154,7 +154,7 @@ irq 14, 46
 irq 15, 47
 
 ; C function for handling IRQs.
-extern i386_irq_handler
+extern irq_handler
 
 align 4
 irq_common_stub:
@@ -173,7 +173,8 @@ irq_common_stub:
     mov fs, ax
     mov gs, ax
 
-    call i386_irq_handler
+    ; Expects a signature like: void irq_handler(interrupt_info_t)
+    call irq_handler
 
     ; Reload the original data segment descriptor.
     pop eax

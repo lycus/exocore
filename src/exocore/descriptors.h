@@ -1,5 +1,5 @@
-#ifndef EXOCORE_H_I386_DESCRIPTORS
-#define EXOCORE_H_I386_DESCRIPTORS
+#ifndef EXOCORE_H_DESCRIPTORS
+#define EXOCORE_H_DESCRIPTORS
 
 #include "exocore/common.h"
 
@@ -34,8 +34,14 @@ typedef struct idt_pointer
    idt_entry_t* base; // The address of the first idt_entry_t struct.
 } attr(packed) idt_pointer_t;
 
-// Initializes the GDT and IDT.
-void i386_initialize_descriptors(void);
+// Sets up the GDT.
+void initialize_gdt(void);
+
+// Remaps IRQs.
+void initialize_irq(void);
+
+// Sets up the IDT. Should be called after initialize_irq.
+void initialize_idt(void);
 
 // Number of entries in the global descriptor table.
 #define GDT_SIZE 5

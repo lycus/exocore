@@ -76,7 +76,7 @@ def configure(conf):
 
     add_options('KERNLINKFLAGS',
                 ['-T',
-                 os.path.abspath(os.path.join(SRC, conf.options.target, 'linker.ld'))])
+                 os.path.abspath(os.path.join(SRC, '{0}.ld'.format(conf.options.target)))])
 
     add_options('CFLAGS',
                 ['-DEXOCORE_TARGET_{0}'.format(conf.options.target.upper())])
@@ -154,9 +154,7 @@ def build(bld):
 
     bld(features = 'asm c kernel',
         includes = 'src',
-        source = bld.path.ant_glob(search_paths(SRC) +
-                                   search_paths(SRC, 'boot') +
-                                   search_paths(SRC, bld.env.TARGET)),
+        source = bld.path.ant_glob(search_paths(SRC)),
         target = TGT)
 
 class DistCheckContext(Scripting.Dist):

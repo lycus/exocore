@@ -1,8 +1,8 @@
 #include "exocore/console.h"
-#include "exocore/i386/descriptors.h"
-#include "exocore/i386/interrupts.h"
-#include "exocore/i386/io.h"
-#include "exocore/i386/pic.h"
+#include "exocore/descriptors.h"
+#include "exocore/interrupts.h"
+#include "exocore/io.h"
+#include "exocore/pic.h"
 
 static isr_t interrupt_handlers[IDT_SIZE];
 
@@ -11,7 +11,7 @@ void set_interrupt_handler(const interrupt_id_t id, const isr_t handler)
     interrupt_handlers[id] = handler;
 }
 
-void i386_isr_handler(const interrupt_info_t info)
+void isr_handler(const interrupt_info_t info)
 {
     switch (info.id)
     {
@@ -142,17 +142,17 @@ void i386_isr_handler(const interrupt_info_t info)
         interrupt_handlers[info.id](info);
 }
 
-void i386_irq_handler(const interrupt_info_t info)
+void irq_handler(const interrupt_info_t info)
 {
     if (info.id >= INTERRUPT_IRQ_CMOS_CLOCK)
     {
-        i386_io_write_ui8(PIC_SLAVE_COMMAND, PIC_OCW2_EOI);
-        i386_io_wait();
+        io_write_ui8(PIC_SLAVE_COMMAND, PIC_OCW2_EOI);
+        io_wait();
     }
 
-    i386_io_write_ui8(PIC_MASTER_COMMAND, PIC_OCW2_EOI);
-    i386_io_wait();
+    io_write_ui8(PIC_MASTER_COMMAND, PIC_OCW2_EOI);
+    io_wait();
 
     // Just handle stuff in the ISR handler.
-    i386_isr_handler(info);
+    isr_handler(info);
 }

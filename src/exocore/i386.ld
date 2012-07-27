@@ -1,5 +1,5 @@
 OUTPUT_FORMAT("elf32-i386")
-ENTRY (i386_loader)
+ENTRY (kernel_loader)
 
 SECTIONS
 {

@@ -1,9 +1,9 @@
 section .text
 
-global i386_gdt_flush
+global gdt_flush
 
 align 4
-i386_gdt_flush:
+gdt_flush:
 
     ; GDT pointer is the first argument.
     mov eax, [esp + 4]
@@ -27,21 +27,15 @@ align 4
 
     ret
 
-global i386_idt_flush
+global idt_flush
 
 align 4
-i386_idt_flush:
+idt_flush:
 
     ; IDT pointer is the first argument.
     mov eax, [esp + 4]
 
-    ; Just in case...
-    cli
-
     ; Load the IDT.
     lidt [eax]
-
-    ; Enable interrupts.
-    sti
 
     ret

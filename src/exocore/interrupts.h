@@ -1,5 +1,5 @@
-#ifndef EXOCORE_H_I386_INTERRUPTS
-#define EXOCORE_H_I386_INTERRUPTS
+#ifndef EXOCORE_H_INTERRUPTS
+#define EXOCORE_H_INTERRUPTS
 
 #include "exocore/common.h"
 
@@ -77,6 +77,13 @@ typedef struct interrupt_info
 
 typedef void (^ isr_t)(const interrupt_info_t);
 
+// Sets a block to be called when an interrupt fires.
 void set_interrupt_handler(const interrupt_id_t id, const isr_t handler);
+
+// Enables the receiving of interrupts from hardware.
+void enable_interrupts(void);
+
+// Disables the receiving of interrupts from hardware.
+void disable_interrupts(void);
 
 #endif

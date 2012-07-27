@@ -1,5 +1,5 @@
-#ifndef EXOCORE_H_BOOT_MULTIBOOT
-#define EXOCORE_H_BOOT_MULTIBOOT
+#ifndef EXOCORE_H_MULTIBOOT
+#define EXOCORE_H_MULTIBOOT
 
 #include "exocore/common.h"
 
