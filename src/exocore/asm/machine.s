@@ -2,7 +2,7 @@ section .text
 
 global halt_machine
 
-align 4
+align 8
 halt_machine:
 
     hlt

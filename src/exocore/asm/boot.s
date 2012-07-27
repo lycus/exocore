@@ -14,7 +14,7 @@ STACK_SIZE equ 0x4000 ; Size of the kernel execution stack.
 
 section .text
 
-align 4
+align 8
 header:
 
     ; Multiboot-compliant header.
@@ -24,7 +24,7 @@ header:
 
 global kernel_loader
 
-align 4
+align 8
 kernel_loader:
 
     ; Disable interrupts. We enable interrupts once we
@@ -81,5 +81,5 @@ kernel_loader:
 
 section .bss
 
-align 4
+align 8
 stack: resb STACK_SIZE

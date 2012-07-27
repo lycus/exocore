@@ -2,7 +2,7 @@ section .text
 
 global gdt_flush
 
-align 4
+align 8
 gdt_flush:
 
     ; GDT pointer is the first argument.
@@ -22,14 +22,14 @@ gdt_flush:
     ; Far jump to new code segment.
     jmp 0x08:.flush
 
-align 4
+align 8
 .flush:
 
     ret
 
 global idt_flush
 
-align 4
+align 8
 idt_flush:
 
     ; IDT pointer is the first argument.
