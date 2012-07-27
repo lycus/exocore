@@ -27,7 +27,7 @@ void console_print_char(const console_color_t fg, const console_color_t bg, cons
         console_position_x += 4;
     else if (character != '\n')
     {
-        volatile ui8* location = CONSOLE_VIDEO_ADDRESS + (console_position_x + console_position_y * CONSOLE_COLUMNS) * 2;
+        volatile ui8* const location = CONSOLE_VIDEO_ADDRESS + (console_position_x + console_position_y * CONSOLE_COLUMNS) * 2;
 
         *location = (ui8)character;
         *(location + 1) = (fg & 0x0f) | (ui8)(bg << 4);
@@ -57,7 +57,7 @@ void console_clear(void)
 {
     for (ui16 i = 0; i < CONSOLE_COLUMNS * CONSOLE_LINES; i++)
     {
-        volatile ui8* location = CONSOLE_VIDEO_ADDRESS + i * 2;
+        volatile ui8* const location = CONSOLE_VIDEO_ADDRESS + i * 2;
 
         *location = 0x00;
         *(location + 1) = (CONSOLE_FOREGROUND & 0x0f) | (ui8)(CONSOLE_BACKGROUND << 4);
@@ -83,8 +83,8 @@ void console_scroll_display(const ui8 lines)
     {
         for (ui8 current_x = 0; current_x < CONSOLE_COLUMNS; current_x++)
         {
-            volatile ui8* src_location = CONSOLE_VIDEO_ADDRESS + (current_x + offset1) * 2;
-            volatile ui8* dst_location = CONSOLE_VIDEO_ADDRESS + (current_x + offset1 + offset2) * 2;
+            volatile ui8* const src_location = CONSOLE_VIDEO_ADDRESS + (current_x + offset1) * 2;
+            volatile ui8* const dst_location = CONSOLE_VIDEO_ADDRESS + (current_x + offset1 + offset2) * 2;
 
             *src_location = *dst_location;
             *(src_location + 1) = *(dst_location + 1);
@@ -97,7 +97,7 @@ void console_scroll_display(const ui8 lines)
     {
         for (ui8 current_x = 0; current_x < CONSOLE_COLUMNS; current_x++)
         {
-            volatile ui8* location = CONSOLE_VIDEO_ADDRESS + (current_x + offset1) * 2;
+            volatile ui8* const location = CONSOLE_VIDEO_ADDRESS + (current_x + offset1) * 2;
 
             *location = 0x00;
             *(location + 1) = (CONSOLE_FOREGROUND & 0x0f) | (ui8)(CONSOLE_BACKGROUND << 4);

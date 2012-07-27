@@ -104,7 +104,7 @@ static void remap_irq(void)
     SUCCESS("OK.\n");
 }
 
-static void gdt_set_descriptor(uiptr index, ui32 base, ui32 limit, ui8 access, ui8 granularity)
+static void gdt_set_descriptor(const uiptr index, const ui32 base, const ui32 limit, const ui8 access, const ui8 granularity)
 {
     gdt[index].base_low = base & 0xffff;
     gdt[index].base_middle = (base >> 16) & 0xff;
@@ -136,11 +136,11 @@ static void initialize_gdt(void)
     SUCCESS("OK.\n");
 }
 
-static void idt_set_descriptor(uiptr index, void (* base)(void), ui16 selector, ui8 flags)
+static void idt_set_descriptor(const uiptr index, void (* const base)(void), const ui16 selector, const ui8 flags)
 {
     ASSERT(base);
 
-    uiptr addr = (uiptr)base;
+    const uiptr addr = (uiptr)base;
 
     idt[index].base_low = addr & 0xffff;
     idt[index].base_high = (addr >> 16) & 0xffff;
