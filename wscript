@@ -76,7 +76,7 @@ def configure(conf):
 
     add_options('KERNLINKFLAGS',
                 ['-T',
-                 os.path.abspath(os.path.join(SRC, '{0}.ld'.format(conf.options.target)))])
+                 os.path.abspath(os.path.join('linker', '{0}.ld'.format(conf.options.target)))])
 
     add_options('CFLAGS',
                 ['-DEXOCORE_TARGET_{0}'.format(conf.options.target.upper())])
@@ -150,10 +150,10 @@ def build(bld):
     def search_paths(*k, **kw):
         path = os.path.join(*k, **kw)
 
-        return [os.path.join(path, '*.c'), os.path.join(path, '*.s')]
+        return [os.path.join(path, '*.c'), os.path.join(path, 'asm', '*.s')]
 
     bld(features = 'asm c kernel',
-        includes = 'src',
+        includes = 'include',
         source = bld.path.ant_glob(search_paths(SRC)),
         target = TGT)
 
