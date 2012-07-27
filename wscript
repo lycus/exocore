@@ -64,6 +64,9 @@ def configure(conf):
                      'elf'])
 
         if conf.options.target == 'i386':
+            add_options('ASFLAGS',
+                        ['-DEXOCORE_IS_32_BIT'])
+
             add_options('KERNLINKFLAGS',
                         ['-belf32-i386',
                          '-melf_i386'])
