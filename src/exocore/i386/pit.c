@@ -1,13 +1,14 @@
+#include "exocore/console.h"
 #include "exocore/i386/interrupts.h"
 #include "exocore/i386/io.h"
 #include "exocore/i386/pit.h"
 
 static ui64 current_ticks;
 
-#include "exocore/console.h"
-
 void i386_initialize_timer(const ui32 frequency)
 {
+    INFO("Initializing i386 interrupt timer... ");
+
     // Firstly, register our timer callback.
     //register_interrupt_handler(IRQ0, &timer_callback);
     set_interrupt_handler(INTERRUPT_IRQ_TIMER, ^(const interrupt_info_t info attr(unused))
@@ -33,6 +34,8 @@ void i386_initialize_timer(const ui32 frequency)
     i386_io_wait();
     i386_io_write_ui8(PIT_CHANNEL_0_DATA, high);
     i386_io_wait();
+
+    SUCCESS("OK.\n");
 }
 
 ui64 get_ticks()

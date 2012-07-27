@@ -74,7 +74,7 @@ extern void i386_irq_15(void);
 
 static void remap_irq(void)
 {
-    INFO("Remapping i386 IRQs... ");
+    INFO("Remapping i386 interrupt requests... ");
 
     i386_io_write_ui8(PIC_MASTER_COMMAND, PIC_ICW1_ICW4 | PIC_ICW1_INITIALIZE);
     i386_io_wait();

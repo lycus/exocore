@@ -18,17 +18,7 @@ void kmain(const ui32 magic, const multiboot_info_t* const info)
     else
         SUCCESS("OK.\n");
 
-    bool result = initialize_architecture();
-
-    INFO("Initializing target architecture... ");
-
-    if (!result)
-    {
-        ERROR("Failed.\n");
-        return;
-    }
-    else
-        SUCCESS("OK.\n");
+    initialize_architecture();
 
     INFO("\n");
     SUCCESS("Kernel booted successfully.\n");
