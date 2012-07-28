@@ -244,18 +244,11 @@ def dist(dst):
 def qemu(ctx):
     '''runs the kernel in QEMU with GDB server at localhost:1234'''
 
-    disk = 'disk.img'
+    cdrom = 'exocore.iso'
 
-    with open(os.path.join(OUT, disk), 'wb') as f:
-        f.seek(4 * 1024 * 1024)
-        f.write('\0')
-
-    _run_shell(OUT, ctx, 'mkfs.vfat {0}'.format(disk))
-    _run_shell(OUT, ctx, 'syslinux {0}'.format(disk))
-    _run_shell(OUT, ctx, 'mcopy -i {0} /usr/lib/syslinux/mboot.c32 ::mboot.c32'.format(disk))
-    _run_shell(OUT, ctx, 'mcopy -i {0} {1} ::{1}'.format(disk, TGT))
-    _run_shell(OUT, ctx, 'mcopy -i {0} {1} ::syslinux.cfg'.format(disk, os.path.join(os.pardir, 'syslinux.cfg')))
-    _run_shell(OUT, ctx, 'qemu -monitor stdio -S -s -hda {0}'.format(disk))
+    shutil.copy(os.path.join(OUT, TGT), os.path.join('iso', 'boot'))
+    _run_shell(OUT, ctx, 'grub-mkrescue -o {0} {1}'.format(cdrom, os.path.join(os.pardir, 'iso')))
+    _run_shell(OUT, ctx, 'qemu -monitor stdio -S -s -cdrom {0}'.format(cdrom))
 
 class QEMUContext(Build.BuildContext):
     cmd = 'qemu'
