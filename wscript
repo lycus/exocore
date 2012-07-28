@@ -38,6 +38,11 @@ class kernel(Task.Task):
     inst_to = None
     color = 'CYAN'
 
+    def post_run(self):
+        Task.Task.post_run(self)
+
+        shutil.copy(self.outputs[0].abspath(), os.path.join(TOP, 'iso', 'boot'))
+
 @TaskGen.feature('iso')
 @TaskGen.after_method('kernel')
 def iso(self):
@@ -285,7 +290,7 @@ def dist(dst):
 def qemu(ctx):
     '''runs the kernel in QEMU with GDB server at localhost:1234'''
 
-    _run_shell(OUT, ctx, 'qemu -monitor stdio -S -s -cdrom {0}'.format('exocore.iso'))
+    _run_shell(OUT, ctx, 'qemu -monitor stdio -S -s -cdrom {0}'.format(os.path.join(OUT, 'exocore.iso')))
 
 class QEMUContext(Build.BuildContext):
     cmd = 'qemu'
