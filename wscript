@@ -60,8 +60,7 @@ def configure(conf):
                     ['-DEXOCORE_TARGET_{0}'.format(conf.options.target.upper())])
 
         add_options('ASFLAGS',
-                    ['-Werror',
-                     '-Worphan-labels'])
+                    ['-Worphan-labels'])
 
         if conf.options.target == 'i386':
             add_options('ASFLAGS',
@@ -138,7 +137,7 @@ def configure(conf):
                 ['-fno-omit-frame-pointer'])
 
     add_options('CFLAGS',
-                ['-mcmodel=kernel'])
+                ['-mcmodel=large'])
 
     if conf.options.mode == 'debug':
         add_options('CFLAGS',
