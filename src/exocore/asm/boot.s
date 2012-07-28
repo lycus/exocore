@@ -46,6 +46,10 @@ global kernel_loader
 align 8
 kernel_loader:
 
+    ; Back up Multiboot information.
+    mov esi, ebx
+    mov edi, eax
+
     ; Disable interrupts. We enable interrupts once we
     ; initialize the IDT.
     cli
@@ -90,11 +94,6 @@ align 8
     ; Set up the stack (grows down).
     mov esp, stack_top
 
-    ; Pass Multiboot bootloader information and stack pointer.
-    push esp
-    push ebx
-    push eax
-
     ; Reset EFLAGS to a known state.
     xor eax, eax
 
@@ -136,8 +135,12 @@ align 8
     ; Nullify the stack frame pointer.
     xor ebp, ebp
 
-    ; Start the kernel. Remember to keep the stack balanced at this point.
-    ; Expects a signature like: void kmain(ui32, multiboot_info*, void*)
+    ; Pass Multiboot information and stack pointer.
+    push esp
+    push esi
+    push edi
+
+    ; Start the kernel. Expects a signature like: void kmain(ui32, multiboot_info*, void*)
     call kmain
 
     ; If the C code for some reason returns, just halt.
