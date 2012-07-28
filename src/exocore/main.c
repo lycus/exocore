@@ -28,7 +28,12 @@ void kmain(const ui32 magic, const multiboot_info_t* const info, void* sp)
     initialize_pit();
 
     INFO("\n");
-    SUCCESS("Kernel booted successfully.\n");
+
+#ifdef EXOCORE_IS_32_BIT
+    SUCCESS("32-bit kernel booted successfully.\n");
+#else
+    SUCCESS("64-bit kernel booted successfully.\n");
+#endif
 
     for (;;)
     {
