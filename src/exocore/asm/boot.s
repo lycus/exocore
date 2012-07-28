@@ -15,6 +15,44 @@ boot_page_directory:
     dd 00000000000000000000000010000011b
     times PAGE_DIRECTORY_ENTRIES - KERNEL_PAGE_NUMBER - 2 dd 00000000000000000000000000000000b
 %else
+global pml4_base
+
+align 4096
+pml4_base:
+
+    dq pml3_base + 0x0000000000000007
+    times 255 dq 0
+    dq pml3_base + 0x0000000000000007
+    times 253 dq 0
+    dq pml4_base + 0x0000000000000007
+    dq 0
+
+align 4096
+pml3_base:
+
+    dq pml2_base + 0x0000000000000007
+    times 511 dq 0
+
+align 4096
+pml2_base:
+
+%assign i 0
+%rep 50
+    dq pml1_base + i + 0x0000000000000007
+%    assign i i + 4096
+%endrep
+
+    times (512 - 50) dq 0
+
+align 4096
+pml1_base:
+
+%assign i 0
+%rep 512 * 50
+    dq (i << 12) | 0x0000000000000087
+%    assign i i + 1
+%endrep
+
 align 8
 boot_gdt_pointer:
 
@@ -83,7 +121,9 @@ kernel_loader:
     bts eax, 8 ; Set EFER.LME bit.
     wrmsr
 
-    ; TODO: Set up long mode page table.
+    ; Set up the long mode page table.
+    mov ecx, pml4_base
+    mov cr3, ecx
 %endif
 
     mov ecx, cr0
