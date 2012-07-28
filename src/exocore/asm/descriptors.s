@@ -1,3 +1,5 @@
+%include "exocore/asm/segments.s"
+
 section .text
 
 global gdt_flush
@@ -20,7 +22,7 @@ gdt_flush:
 %endif
 
     ; Load segment selectors.
-    mov ax, 0x10
+    mov ax, KERNEL_DATA_SEGMENT
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -28,7 +30,7 @@ gdt_flush:
     mov ss, ax
 
     ; Far jump to new code segment.
-    jmp 0x08:.flush
+    jmp KERNEL_CODE_SEGMENT:.flush
 
 align 8
 .flush:

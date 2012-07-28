@@ -1,3 +1,5 @@
+%include "exocore/asm/segments.s"
+
 section .text
 
 global enable_interrupts
@@ -116,7 +118,7 @@ isr_common_stub:
     push eax
 
     ; Load the kernel data segment descriptor.
-    mov ax, 0x10
+    mov ax, KERNEL_DATA_SEGMENT
     mov ds, ax
     mov es, ax
     mov fs, ax
@@ -233,7 +235,7 @@ irq_common_stub:
     push eax
 
     ; Load the kernel data segment descriptor.
-    mov ax, 0x10
+    mov ax, KERNEL_DATA_SEGMENT
     mov ds, ax
     mov es, ax
     mov fs, ax

@@ -1,13 +1,13 @@
-; The kernel main routine.
-extern kmain
-
 %include "exocore/asm/multiboot.s"
 %include "exocore/asm/boot.s"
+
+; The kernel main routine.
+extern kmain
 
 section .data
 
 %ifdef EXOCORE_IS_32_BIT
-align 4096
+align PAGE_SIZE
 boot_page_directory:
 
     dd 00000000000000000000000010000011b
@@ -17,7 +17,7 @@ boot_page_directory:
 %else
 global pml4_base
 
-align 4096
+align PAGE_SIZE
 pml4_base:
 
     dq pml3_base + 0x0000000000000007
@@ -27,24 +27,24 @@ pml4_base:
     dq pml4_base + 0x0000000000000007
     dq 0
 
-align 4096
+align PAGE_SIZE
 pml3_base:
 
     dq pml2_base + 0x0000000000000007
     times 511 dq 0
 
-align 4096
+align PAGE_SIZE
 pml2_base:
 
 %assign i 0
 %rep 50
     dq pml1_base + i + 0x0000000000000007
-%    assign i i + 4096
+%    assign i i + PAGE_SIZE
 %endrep
 
     times (512 - 50) dq 0
 
-align 4096
+align PAGE_SIZE
 pml1_base:
 
 %assign i 0
