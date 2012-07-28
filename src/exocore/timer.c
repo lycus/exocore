@@ -1,6 +1,7 @@
 #include "exocore/console.h"
 #include "exocore/interrupts.h"
 #include "exocore/io.h"
+#include "exocore/pit.h"
 #include "exocore/timer.h"
 
 static ui64 current_ticks;
