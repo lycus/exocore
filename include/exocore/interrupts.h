@@ -3,7 +3,7 @@
 
 #include "exocore/common.h"
 
-typedef enum interrupt_id : ui32
+typedef enum interrupt_id : uiptr
 {
     INTERRUPT_DIVISION_BY_ZERO_EXCEPTION = 0,
     INTERRUPT_DEBUG_EXCEPTION = 1,
@@ -57,22 +57,32 @@ typedef enum interrupt_id : ui32
 
 typedef struct interrupt_info
 {
-    const ui32 ds; // Data segment selector.
-    const ui32 edi; // General purpose EDI register.
-    const ui32 esi; // General purpose ESI register.
-    const ui32 ebp; // General purpose EBP register.
-    const ui32 esp; // General purpose ESP register.
-    const ui32 ebx; // General purpose EBX register.
-    const ui32 edx; // General purpose EDX register.
-    const ui32 ecx; // General purpose ECX register.
-    const ui32 eax; // General purpose EAX register.
+    const uiptr ds; // Data segment selector.
+#ifndef EXOCORE_IS_32_BIT
+    const uiptr r15; // General purpose R15 register.
+    const uiptr r14; // General purpose R14 register.
+    const uiptr r13; // General purpose R13 register.
+    const uiptr r12; // General purpose R12 register.
+    const uiptr r11; // General purpose R11 register.
+    const uiptr r10; // General purpose R10 register.
+    const uiptr r9; // General purpose R9 register.
+    const uiptr r8; // General purpose R8 register.
+#endif
+    const uiptr edi; // General purpose EDI register.
+    const uiptr esi; // General purpose ESI register.
+    const uiptr ebp; // General purpose EBP register.
+    const uiptr esp; // General purpose ESP register.
+    const uiptr ebx; // General purpose EBX register.
+    const uiptr edx; // General purpose EDX register.
+    const uiptr ecx; // General purpose ECX register.
+    const uiptr eax; // General purpose EAX register.
     const interrupt_id_t id; // Interrupt identifier.
-    const ui32 error_code; // Error code (0 if not applicable).
-    const ui32 user_eip;
-    const ui32 user_cs;
-    const ui32 user_eflags;
-    const ui32 user_esp;
-    const ui32 user_ss;
+    const uiptr error_code; // Error code (0 if not applicable).
+    const uiptr user_eip;
+    const uiptr user_cs;
+    const uiptr user_eflags;
+    const uiptr user_esp;
+    const uiptr user_ss;
 } attr(packed) interrupt_info_t;
 
 typedef void (^ isr_t)(const interrupt_info_t);
