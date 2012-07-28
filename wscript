@@ -59,18 +59,22 @@ def configure(conf):
         add_options('ASFLAGS',
                     ['-DEXOCORE_TARGET_{0}'.format(conf.options.target.upper())])
 
-        add_options('ASFLAGS',
-                    ['-f',
-                     'elf'])
-
         if conf.options.target == 'i386':
             add_options('ASFLAGS',
                         ['-DEXOCORE_IS_32_BIT'])
+
+            add_options('ASFLAGS',
+                        ['-f',
+                         'elf32'])
 
             add_options('KERNLINKFLAGS',
                         ['-belf32-i386',
                          '-melf_i386'])
         else:
+            add_options('ASFLAGS',
+                        ['-f',
+                         'elf64'])
+
             add_options('KERNLINKFLAGS',
                         ['-belf64-x86-64',
                          '-melf_x86_64'])
