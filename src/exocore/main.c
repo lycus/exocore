@@ -14,7 +14,7 @@ void kmain(const ui32 magic, const multiboot_info_t* const info, void* sp)
 
     INFO("Verifying bootloader sanity... ");
 
-    if (magic != MULTIBOOT_KERNEL_MAGIC)
+    if (magic != 0x2badb002)
     {
         ERROR("Invalid magic number.\n");
         return;

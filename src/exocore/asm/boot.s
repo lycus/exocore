@@ -79,39 +79,10 @@ section .text
 align 8
 header:
 
-    ; Multiboot 2-compliant header.
+    ; Multiboot-compliant header.
     dd MULTIBOOT_MAGIC
-    dd MULTIBOOT_ARCHITECTURE
-    dd header_end - header
-    dd -(MULTIBOOT_MAGIC + MULTIBOOT_ARCHITECTURE + (header_end - header))
-
-console_flags:
-
-    dw MULTIBOOT_TAG_CONSOLE_FLAGS
-    dw 0000000000000000b
-    dd console_flags_end - console_flags
-    dd 00000000000000000000000000000011b
-
-console_flags_end:
-
-module_alignment:
-
-    dw MULTIBOOT_TAG_MODULE_ALIGNMENT
-    dw 0000000000000000b
-    dd module_alignment_end - module_alignment
-
-module_alignment_end:
-
-tag_end:
-
-    ; Terminate tag list.
-    dw MULTIBOOT_TAG_END
-    dw 0000000000000000b
-    dd tag_end_end - tag_end
-
-tag_end_end:
-
-header_end:
+    dd MULTIBOOT_FLAGS
+    dd MULTIBOOT_CHECKSUM
 
 global kernel_loader
 

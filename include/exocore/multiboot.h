@@ -3,8 +3,14 @@
 
 #include "exocore/common.h"
 
+// The magic number of the Multiboot header.
+#define MULTIBOOT_HEADER_MAGIC 0x1badb002
+
 // The magic number passed to the kernel.
-#define MULTIBOOT_KERNEL_MAGIC 0x36d76289
+#define MULTIBOOT_KERNEL_MAGIC 0x2badb002
+
+// The flags (memory info and module alignment) of the Multiboot header.
+#define MULTIBOOT_HEADER_FLAGS 0x00010003
 
 // The Multiboot header.
 typedef struct multiboot_header
