@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 import os, shutil, subprocess, sys, tarfile, tempfile
-from waflib import Build, Context, Scripting, Utils
-from waflib.TaskGen import feature
-from waflib.Tools.ccroot import link_task
+from waflib import Build, Context, Scripting, Utils, Task, TaskGen
+from waflib.Tools import ccroot
 
 APPNAME = 'ExoCore'
 VERSION = '1.0'
@@ -11,19 +10,50 @@ VERSION = '1.0'
 TOP = os.curdir
 OUT = 'build'
 
-SRC = os.path.join('src', 'exocore')
-TGT = 'exocore.bin'
-
 def options(opt):
     opt.add_option('--target', action = 'store', default = 'i386', help = 'target architecture to build for (i386/x86_64)')
     opt.add_option('--mode', action = 'store', default = 'debug', help = 'the mode to compile in (debug/release)')
 
-class kernel(link_task):
+class link(ccroot.link_task):
     "Link object files into a kernel binary"
 
     run_str = '${LD} ${KERNLINKFLAGS} -o ${TGT} ${SRC}'
+    ext_out = ['.elf']
+    inst_to = None
+
+@TaskGen.feature('kernel')
+@TaskGen.after_method('apply_link')
+def kernel(self):
+    link_output = self.link_task.outputs[0]
+
+    self.kernel_task = self.create_task('kernel',
+                                        src = link_output,
+                                        tgt = self.path.find_or_declare(link_output.change_ext('.bin').name))
+
+class kernel(Task.Task):
+    "Copy kernel code to final kernel binary"
+
+    run_str = '${OBJCOPY} ${KERNFLAGS} ${SRC} ${TGT}'
     ext_out = ['.bin']
     inst_to = None
+    color = 'CYAN'
+
+@TaskGen.feature('iso')
+@TaskGen.after_method('kernel')
+def iso(self):
+    kernel_output = self.kernel_task.outputs[0]
+
+    self.iso_task = self.create_task('iso',
+                                     src = kernel_output,
+                                     tgt = self.path.find_or_declare(kernel_output.change_ext('.iso').name))
+
+class iso(Task.Task):
+    "Build a bootable ISO for GRUB 2"
+
+    run_str = '${MKRESCUE} -o ${TGT} ${SRC} -- -report-about SORRY > /dev/null 2>&1'
+    ext_out = ['.iso']
+    inst_to = None
+    color = 'PINK'
 
 def configure(conf):
     conf.env.TARGET = conf.options.target
@@ -34,8 +64,12 @@ def configure(conf):
                 conf.env.append_value(flags, option)
 
     conf.load('ar')
-    conf.find_program('clang', var = 'CC')
+    conf.find_program('clang', var = 'CC', mandatory = True)
     conf.load('gcc')
+    conf.find_program('objcopy', var = 'OBJCOPY', mandatory = True)
+    conf.find_program('grub-mkrescue', var = 'MKRESCUE', mandatory = True)
+
+    conf.env.link_PATTERN = '%s.elf'
 
     conf.check_cc(fragment = r'''int main()
                                  {
@@ -50,10 +84,10 @@ def configure(conf):
                   execute = False,
                   msg = 'Checking for clang 3.1+')
 
-    conf.find_program('ld', var = 'LD')
+    conf.find_program('ld', var = 'LD', mandatory = True)
 
     if conf.options.target == 'i386' or conf.options.target == 'x86_64':
-        conf.find_program('yasm', var = 'AS')
+        conf.find_program('yasm', var = 'AS', mandatory = True)
         conf.load('nasm')
 
         add_options('ASFLAGS',
@@ -81,6 +115,10 @@ def configure(conf):
             add_options('KERNLINKFLAGS',
                         ['-belf64-x86-64',
                          '-melf_x86_64'])
+
+        add_options('KERNFLAGS',
+                    ['-O',
+                     'elf32-i386'])
     else:
         conf.fatal('--target must be either i386 or x86_64.')
 
@@ -165,10 +203,10 @@ def build(bld):
 
         return [os.path.join(path, '*.c'), os.path.join(path, 'asm', '*.s')]
 
-    bld(features = 'asm c kernel',
+    bld(features = 'asm c link kernel iso',
         includes = 'include',
-        source = bld.path.ant_glob(search_paths(SRC)),
-        target = TGT)
+        source = bld.path.ant_glob(search_paths(os.path.join('src', 'exocore'))),
+        target = 'exocore')
 
 class DistCheckContext(Scripting.Dist):
     cmd = 'distcheck'
@@ -244,11 +282,7 @@ def dist(dst):
 def qemu(ctx):
     '''runs the kernel in QEMU with GDB server at localhost:1234'''
 
-    cdrom = 'exocore.iso'
-
-    shutil.copy(os.path.join(OUT, TGT), os.path.join('iso', 'boot'))
-    _run_shell(OUT, ctx, 'grub-mkrescue -o {0} {1}'.format(cdrom, os.path.join(os.pardir, 'iso')))
-    _run_shell(OUT, ctx, 'qemu -monitor stdio -S -s -cdrom {0}'.format(cdrom))
+    _run_shell(OUT, ctx, 'qemu -monitor stdio -S -s -cdrom {0}'.format('exocore.iso'))
 
 class QEMUContext(Build.BuildContext):
     cmd = 'qemu'
