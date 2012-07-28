@@ -48,12 +48,6 @@ boot_gdt:
 boot_gdt_end:
 %endif
 
-align 8
-boot_idt_pointer:
-
-    dw 0
-    dd 0x00000000
-
 section .text
 
 align 8
@@ -72,10 +66,6 @@ kernel_loader:
     ; Disable interrupts. We enable interrupts once we set
     ; up the real IDT.
     cli
-
-    ; Load an empty IDT so a non-maskable interrupt causes
-    ; a triple fault during boot.
-    lidt [boot_idt_pointer]
 
     ; Back up Multiboot information.
     mov esi, ebx
