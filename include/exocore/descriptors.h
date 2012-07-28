@@ -5,7 +5,7 @@
 
 typedef struct gdt_entry
 {
-    ui16 limit_low; // The lower 16 bits of the limit.
+    ui16 limit_low; // The first 16 bits of the limit.
     ui16 base_low;  // The lower 16 bits of the base.
     ui8 base_middle; // The next 8 bits of the base.
     ui8 access; // Access flags; determine what ring this segment can be used in.
@@ -21,11 +21,18 @@ typedef struct gdt_pointer
 
 typedef struct idt_entry
 {
-    ui16 base_low; // The lower 16 bits of the address to jump to when this interrupt fires.
+    ui16 base_low; // The first 16 bits of the address to jump to when this interrupt fires.
     ui16 selector; // Kernel segment selector.
+#ifdef EXOCORE_IS_32_BIT
     ui8 reserved; // This must always be zero.
     ui8 flags; // More flags. See documentation.
-    ui16 base_high; // The upper 16 bits of the address to jump to.
+    ui16 base_high; // The last 16 bits of the address to jump to.
+#else
+    ui16 flags; // More flags. See documentation.
+    ui16 base_middle; // The next 16 bits of the address to jump to.
+    ui32 base_high; // The last 32 bits of the address to jump to.
+    ui32 reserved; // This must always be zero.
+#endif
 } attr(packed) idt_entry_t;
 
 typedef struct idt_pointer
