@@ -13,13 +13,6 @@ gdt_flush:
 
     ; Load the GDT.
     lgdt [eax]
-%else
-    ; GDT pointer is the first argument.
-    mov rax, [rsp + 8]
-
-    ; Load the GDT.
-    lgdt [rax]
-%endif
 
     ; Load segment selectors.
     mov ax, KERNEL_DATA_SEGMENT
@@ -36,6 +29,13 @@ align 8
 .flush:
 
     ret
+%else
+    ; GDT pointer is the first argument.
+    mov rax, [rsp + 8]
+
+    ; Load the GDT.
+    lgdt [rax]
+%endif
 
 global idt_flush
 

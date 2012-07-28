@@ -93,6 +93,17 @@ isr_common_stub:
 %ifdef EXOCORE_IS_32_BIT
     ; Save all GPRs.
     pushad
+
+    ; Back up the data segment descriptor.
+    mov ax, ds
+    push eax
+
+    ; Load the kernel data segment descriptor.
+    mov ax, KERNEL_DATA_SEGMENT
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
 %else
     ; Save all GPRs.
     push rax
@@ -113,28 +124,18 @@ isr_common_stub:
     push r15
 %endif
 
-    ; Back up the data segment descriptor.
-    mov ax, ds
-    push eax
-
-    ; Load the kernel data segment descriptor.
-    mov ax, KERNEL_DATA_SEGMENT
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-
     ; Expects a signature like: void isr_handler(interrupt_info_t)
     call isr_handler
 
+%ifdef EXOCORE_IS_32_BIT
     ; Reload the original data segment descriptor.
     pop eax
+
     mov ds, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
 
-%ifdef EXOCORE_IS_32_BIT
     ; Restore all GPRs.
     popad
 
@@ -210,6 +211,17 @@ irq_common_stub:
 %ifdef EXOCORE_IS_32_BIT
     ; Save all GPRs.
     pushad
+
+    ; Back up the data segment descriptor.
+    mov ax, ds
+    push eax
+
+    ; Load the kernel data segment descriptor.
+    mov ax, KERNEL_DATA_SEGMENT
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
 %else
     ; Save all GPRs.
     push rax
@@ -230,20 +242,10 @@ irq_common_stub:
     push r15
 %endif
 
-    ; Back up the data segment descriptor.
-    mov ax, ds
-    push eax
-
-    ; Load the kernel data segment descriptor.
-    mov ax, KERNEL_DATA_SEGMENT
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-
     ; Expects a signature like: void irq_handler(interrupt_info_t)
     call irq_handler
 
+%ifdef EXOCORE_IS_32_BIT
     ; Reload the original data segment descriptor.
     pop eax
     mov ds, ax
@@ -251,7 +253,6 @@ irq_common_stub:
     mov fs, ax
     mov gs, ax
 
-%ifdef EXOCORE_IS_32_BIT
     ; Restore all GPRs.
     popad
 

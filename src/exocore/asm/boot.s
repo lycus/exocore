@@ -1,10 +1,15 @@
 %include "exocore/asm/multiboot.s"
 %include "exocore/asm/boot.s"
 
+%ifndef EXOCORE_IS_32_BIT
+%include "exocore/asm/segments.s"
+%endif
+
 ; The kernel main routine.
 extern kmain
 
 section .data
+bits 32
 
 %ifdef EXOCORE_IS_32_BIT
 align PAGE_SIZE
@@ -39,7 +44,7 @@ pml2_base:
 %assign i 0
 %rep 50
     dq pml1_base + i + 0x0000000000000007
-%    assign i i + PAGE_SIZE
+%assign i i + PAGE_SIZE
 %endrep
 
     times (512 - 50) dq 0
@@ -50,7 +55,7 @@ pml1_base:
 %assign i 0
 %rep 512 * 50
     dq (i << 12) | 0x0000000000000087
-%    assign i i + 1
+%assign i i + 1
 %endrep
 
 align 8
@@ -141,18 +146,18 @@ kernel_loader:
     bts ecx, 7 ; Set CR4.PGE bit.
 
     mov cr4, ecx
-
-    ; Get to the higher half (kernel space).
-    lea ecx, [.high]
-    jmp ecx
 %else
     ; Load the boot-time GDT.
     lgdt [boot_gdt]
-
-    ; TODO: Jump to 64-bit code.
 %endif
 
+    lea ecx, [.high]
+    jmp ecx
+
 align 8
+%ifndef EXOCORE_IS_32_BIT
+bits 64
+%endif
 .high:
 
     ; Set up the stack (grows down).
@@ -177,6 +182,7 @@ align 8
     popfq
 %endif
 
+%ifdef EXOCORE_IS_32_BIT
     mov ecx, cr0
 
     ; Enable x87 and SSE.
@@ -204,6 +210,35 @@ align 8
     bts ecx, 10 ; Set CR4.OSXMMEXCPT bit.
 
     mov cr4, ecx
+%else
+    mov rcx, cr0
+
+    ; Enable x87 and SSE.
+    bts rcx, 1 ; Set CR0.MP bit.
+    btr rcx, 2 ; Clear CR0.EM bit.
+
+    ; Disable write protection.
+    btr rcx, 16 ; Clear CR0.WP bit.
+
+    ; Ensure memory coherency is maintained.
+    btr rcx, 29 ; Clear CR0.NW bit.
+    bts rcx, 30 ; Set CR0.CD bit.
+
+    mov cr0, rcx
+
+    mov rcx, cr4
+
+    ; Allow DR4 and DR5 access for compatibility.
+    bts rcx, 3 ; Set CR4.DE bit.
+
+    ; Enable saving/restoring of x87 and SSE state.
+    bts rcx, 9 ; Set CR4.OSFXSR bit.
+
+    ; Support unmasked SIMD exceptions.
+    bts rcx, 10 ; Set CR4.OSXMMEXCPT bit.
+
+    mov cr4, rcx
+%endif
 
     ; Nullify the stack frame pointer.
 %ifdef EXOCORE_IS_32_BIT
@@ -230,6 +265,7 @@ align 8
     hlt
 
 section .bss
+bits 32
 
 align 8
 stack_bottom:
