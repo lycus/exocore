@@ -21,9 +21,9 @@ KERNEL_VMA equ 0xffff800000000000 ; Keep in sync with the linker script.
 
 KERNEL_PAGE_NUMBER equ KERNEL_VMA / PAGE_SIZE / PAGE_DIRECTORY_ENTRIES
 
-%ifdef EXOCORE_IS_32_BIT
 section .data
 
+%ifdef EXOCORE_IS_32_BIT
 align 4096
 boot_page_directory:
 
@@ -31,9 +31,30 @@ boot_page_directory:
     times KERNEL_PAGE_NUMBER - 1 dd 00000000000000000000000000000000b
     dd 00000000000000000000000010000011b
     times PAGE_DIRECTORY_ENTRIES - KERNEL_PAGE_NUMBER - 2 dd 00000000000000000000000000000000b
+%else
+align 8
+boot_gdt_pointer:
+
+    dw boot_gdt_end - boot_gdt - 1
+    dq boot_gdt - KERNEL_VMA
+
+align 8
+boot_gdt:
+
+    dq 0000000000000000000000000000000000000000000000000000000000000000b ; Null segment.
+    dq 0000000000100000100110000000000000000000000000000000000000000000b ; 64-bit kernel code segment.
+    dq 0000000000000000100100000000000000000000000000000000000000000000b ; 64-bit kernel data segment.
+
+boot_gdt_end:
+%endif
+
+align 8
+boot_idt_pointer:
+
+    dw 0
+    dd 0x00000000
 
 section .text
-%endif
 
 align 8
 header:
@@ -48,13 +69,17 @@ global kernel_loader
 align 8
 kernel_loader:
 
+    ; Disable interrupts. We enable interrupts once we set
+    ; up the real IDT.
+    cli
+
+    ; Load an empty IDT so a non-maskable interrupt causes
+    ; a triple fault during boot.
+    lidt [boot_idt_pointer]
+
     ; Back up Multiboot information.
     mov esi, ebx
     mov edi, eax
-
-    ; Disable interrupts. We enable interrupts once we
-    ; initialize the IDT.
-    cli
 
 %ifdef EXOCORE_IS_32_BIT
     ; Addresses must be physical until we enable paging.
@@ -82,7 +107,7 @@ kernel_loader:
     ; Enable long mode.
     mov ecx, 0xc0000080
     rdmsr
-    bts eax, 8 ; Set IA-32e bit.
+    bts eax, 8 ; Set EFER.LME bit.
     wrmsr
 
     ; TODO: Set up long mode page table.
@@ -108,7 +133,9 @@ kernel_loader:
     lea ecx, [.high]
     jmp ecx
 %else
-    ; TODO: Initialize the GDT.
+    ; Load the boot-time GDT.
+    lgdt [boot_gdt]
+
     ; TODO: Jump to 64-bit code.
 %endif
 
@@ -116,7 +143,11 @@ align 8
 .high:
 
     ; Set up the stack (grows down).
+%ifdef EXOCORE_IS_32_BIT
     mov esp, stack_top
+%else
+    mov rsp, stack_top
+%endif
 
     ; Reset EFLAGS to a known state.
     xor eax, eax
@@ -157,12 +188,22 @@ align 8
     mov cr4, ecx
 
     ; Nullify the stack frame pointer.
+%ifdef EXOCORE_IS_32_BIT
     xor ebp, ebp
+%else
+    xor rbp, rbp
+%endif
 
     ; Pass Multiboot information and stack pointer.
+%ifdef EXOCORE_IS_32_BIT
     push esp
     push esi
     push edi
+%else
+    push rsp
+    push rsi
+    push rdi
+%endif
 
     ; Start the kernel. Expects a signature like: void kmain(ui32, multiboot_info*, void*)
     call kmain
