@@ -59,6 +59,10 @@ def configure(conf):
         add_options('ASFLAGS',
                     ['-DEXOCORE_TARGET_{0}'.format(conf.options.target.upper())])
 
+        add_options('ASFLAGS',
+                    ['-Werror',
+                     '-Worphan-labels'])
+
         if conf.options.target == 'i386':
             add_options('ASFLAGS',
                         ['-DEXOCORE_IS_32_BIT'])
