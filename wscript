@@ -50,7 +50,7 @@ def iso(self):
 class iso(Task.Task):
     "Build a bootable ISO for GRUB 2"
 
-    run_str = '${MKRESCUE} -o ${TGT} ${SRC} -- -report-about SORRY > /dev/null 2>&1'
+    run_str = '${MKRESCUE} -o ${TGT} ${SRC} ${ISOFLAGS} -- -report-about SORRY > /dev/null 2>&1'
     ext_out = ['.iso']
     inst_to = None
     color = 'PINK'
@@ -196,6 +196,9 @@ def configure(conf):
                     ['-O3'])
     else:
         conf.fatal('--mode must be either debug or release.')
+
+    add_options('ISOFLAGS',
+                [os.path.abspath('iso')])
 
 def build(bld):
     def search_paths(*k, **kw):
