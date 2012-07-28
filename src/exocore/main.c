@@ -5,9 +5,10 @@
 #include "exocore/multiboot.h"
 #include "exocore/timer.h"
 
-void kmain(const ui32 magic, const multiboot_info_t* const info)
+void kmain(const ui32 magic, const multiboot_info_t* const info, void* sp)
 {
     ASSERT(info);
+    ASSERT(sp);
 
     CLEAR();
 

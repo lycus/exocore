@@ -12,6 +12,19 @@ MULTIBOOT_CHECKSUM equ -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS) ; Fabulous Multiboot
 
 STACK_SIZE equ 0x4000 ; Size of the kernel execution stack.
 
+KERNEL_VIRTUAL_BASE equ 0xC0000000
+KERNEL_PAGE_NUMBER equ KERNEL_VIRTUAL_BASE / 0x1000 / 0x400
+
+section .data
+
+align 4096
+boot_page_directory:
+
+    dd 00000000000000000000000010000011b
+    times KERNEL_PAGE_NUMBER - 1 dd 00000000000000000000000000000000b
+    dd 00000000000000000000000010000011b
+    times 0x400 - KERNEL_PAGE_NUMBER - 2 dd 00000000000000000000000000000000b
+
 section .text
 
 align 8
@@ -28,16 +41,55 @@ align 8
 kernel_loader:
 
     ; Disable interrupts. We enable interrupts once we
-    ; initialize the IDT during target architecture init.
+    ; initialize the IDT.
     cli
 
-    ; Set up the stack (grows down).
-    mov esp, stack + STACK_SIZE
+    ; Addresses must be physical until we enable paging.
+    mov ecx, boot_page_directory
+    mov edx, KERNEL_VIRTUAL_BASE
+    sub ecx, edx
 
-    ; Pass Multiboot bootloader information.
+    ; Set the page directory.
+    mov cr3, ecx
+
+    mov ecx, cr4
+
+    ; Enable 4 MB pages.
+    bts ecx, 4 ; Set CR4.PSE bit.
+
+    mov cr4, ecx
+
+    mov ecx, cr0
+
+    ; Enable paging. We are already in protected mode, so
+    ; we do not need to set CR0.PE.
+    bts ecx, 31 ; Set CR0.PG bit.
+
+    mov cr0, ecx
+
+    mov ecx, cr4
+
+    ; Enable global paging.
+    bts ecx, 7 ; Set CR4.PGE bit.
+
+    mov cr4, ecx
+
+    ; Get to the higher half (kernel space).
+    lea ecx, [.high]
+    jmp ecx
+
+align 8
+.high:
+
+    ; Set up the stack (grows down).
+    mov esp, stack_top
+
+    ; Pass Multiboot bootloader information and stack pointer.
+    push esp
     push ebx
     push eax
 
+    ; Reset EFLAGS to a known state.
     xor eax, eax
 
     ; Set I/O permission level to 3.
@@ -52,6 +104,9 @@ kernel_loader:
     ; Enable x87 and SSE.
     bts ecx, 1 ; Set CR0.MP bit.
     btr ecx, 2 ; Clear CR0.EM bit.
+
+    ; Disable write protection.
+    btr ecx, 16 ; Clear CR0.WP bit.
 
     ; Ensure memory coherency is maintained.
     btr ecx, 29 ; Clear CR0.NW bit.
@@ -76,10 +131,17 @@ kernel_loader:
     xor ebp, ebp
 
     ; Start the kernel. Remember to keep the stack balanced at this point.
-    ; Expects a signature like: void kmain(ui32, multiboot_info*)
+    ; Expects a signature like: void kmain(ui32, multiboot_info*, void*)
     call kmain
+
+    ; If the C code for some reason returns, just halt.
+    hlt
 
 section .bss
 
 align 8
-stack: resb STACK_SIZE
+stack_bottom:
+
+    resb STACK_SIZE
+
+stack_top:
