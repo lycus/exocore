@@ -146,8 +146,13 @@ align 8
     bts eax, 12 ; Set EFLAGS.IOPL.1 bit.
     bts eax, 13 ; Set EFLAGS.IOPL.2 bit.
 
+%ifdef EXOCORE_IS_32_BIT
     push eax
-    popf
+    popfd
+%else
+    push rax
+    popfq
+%endif
 
     mov ecx, cr0
 
