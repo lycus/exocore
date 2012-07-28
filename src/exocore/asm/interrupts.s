@@ -130,8 +130,8 @@ isr_common_stub:
 
         cli
 
-        push byte 0
-        push byte %2
+        push 0
+        push %2
 
         jmp irq_common_stub
 %endmacro
