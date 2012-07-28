@@ -6,4 +6,3 @@ align 8
 halt_machine:
 
     hlt
-    jmp halt_machine
