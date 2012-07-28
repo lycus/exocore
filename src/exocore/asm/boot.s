@@ -264,12 +264,9 @@ bits 64
     ; If the C code for some reason returns, just halt.
     hlt
 
-section .bss
-bits 32
-
 align 8
 stack_bottom:
 
-    resb 0x4000
+    times 0x4000 db 0
 
 stack_top:
