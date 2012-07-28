@@ -10,10 +10,11 @@ MULTIBOOT_MAGIC equ 0x1badb002 ; Multiboot magic number.
 MULTIBOOT_FLAGS equ MULTIBOOT_PAGE_ALIGNMENT | MULTIBOOT_MEMORY_INFO ; Multiboot module flags.
 MULTIBOOT_CHECKSUM equ -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS) ; Fabulous Multiboot checksum.
 
-STACK_SIZE equ 0x4000 ; Size of the kernel execution stack.
+PAGE_SIZE equ 0x1000 ; Size of memory pages.
+PAGE_DIRECTORY_ENTRIES equ 1024 ; Number of entries in the page directory.
 
-KERNEL_VIRTUAL_BASE equ 0xC0000000
-KERNEL_PAGE_NUMBER equ KERNEL_VIRTUAL_BASE / 0x1000 / 0x400
+KERNEL_VMA equ 0xC0000000 ; Keep in sync with the linker script.
+KERNEL_PAGE_NUMBER equ KERNEL_VMA / PAGE_SIZE / PAGE_DIRECTORY_ENTRIES
 
 section .data
 
@@ -23,7 +24,7 @@ boot_page_directory:
     dd 00000000000000000000000010000011b
     times KERNEL_PAGE_NUMBER - 1 dd 00000000000000000000000000000000b
     dd 00000000000000000000000010000011b
-    times 0x400 - KERNEL_PAGE_NUMBER - 2 dd 00000000000000000000000000000000b
+    times PAGE_DIRECTORY_ENTRIES - KERNEL_PAGE_NUMBER - 2 dd 00000000000000000000000000000000b
 
 section .text
 
@@ -46,7 +47,7 @@ kernel_loader:
 
     ; Addresses must be physical until we enable paging.
     mov ecx, boot_page_directory
-    mov edx, KERNEL_VIRTUAL_BASE
+    mov edx, KERNEL_VMA
     sub ecx, edx
 
     ; Set the page directory.
@@ -142,6 +143,6 @@ section .bss
 align 8
 stack_bottom:
 
-    resb STACK_SIZE
+    resb 0x4000
 
 stack_top:
