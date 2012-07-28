@@ -1,8 +1,8 @@
-OUTPUT_FORMAT("elf32-i386")
+OUTPUT_FORMAT("elf64-x86-64")
 ENTRY (kernel_loader)
 
-kernel_lma = 0x00100000;
-kernel_vma = 0xC0000000;
+kernel_lma = 0x0000000000100000;
+kernel_vma = 0xffff800000000000;
 
 SECTIONS
 {
