@@ -119,7 +119,7 @@ isr_common_stub:
     sti
 
     ; Return from the ISR.
-    iret
+    iretd
 
 ; Helper macro for defining IRQs.
 %macro irq 2
@@ -190,4 +190,4 @@ irq_common_stub:
     sti
 
     ; Return from the IRQ.
-    iret
+    iretd
