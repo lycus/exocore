@@ -1,25 +1,8 @@
 ; The kernel main routine.
 extern kmain
 
-MULTIBOOT_PAGE_ALIGNMENT equ 1 << 0
-MULTIBOOT_MEMORY_INFO equ 1 << 1
-MULTIBOOT_VIDEO_MODE equ 1 << 2
-MULTIBOOT_AOUT_KLUDGE equ 1 << 16
-
-MULTIBOOT_MAGIC equ 0x1badb002 ; Multiboot magic number.
-MULTIBOOT_FLAGS equ MULTIBOOT_PAGE_ALIGNMENT | MULTIBOOT_MEMORY_INFO ; Multiboot module flags.
-MULTIBOOT_CHECKSUM equ -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS) ; Fabulous Multiboot checksum.
-
-PAGE_SIZE equ 0x1000 ; Size of memory pages.
-PAGE_DIRECTORY_ENTRIES equ 1024 ; Number of entries in the page directory.
-
-%ifdef EXOCORE_IS_32_BIT
-KERNEL_VMA equ 0xC0000000 ; Keep in sync with the linker script.
-%else
-KERNEL_VMA equ 0xffff800000000000 ; Keep in sync with the linker script.
-%endif
-
-KERNEL_PAGE_NUMBER equ KERNEL_VMA / PAGE_SIZE / PAGE_DIRECTORY_ENTRIES
+%include "exocore/asm/multiboot.s"
+%include "exocore/asm/boot.s"
 
 section .data
 
