@@ -21,6 +21,7 @@ KERNEL_VMA equ 0xffff800000000000 ; Keep in sync with the linker script.
 
 KERNEL_PAGE_NUMBER equ KERNEL_VMA / PAGE_SIZE / PAGE_DIRECTORY_ENTRIES
 
+%ifdef EXOCORE_IS_32_BIT
 section .data
 
 align 4096
@@ -32,6 +33,7 @@ boot_page_directory:
     times PAGE_DIRECTORY_ENTRIES - KERNEL_PAGE_NUMBER - 2 dd 00000000000000000000000000000000b
 
 section .text
+%endif
 
 align 8
 header:
@@ -54,6 +56,7 @@ kernel_loader:
     ; initialize the IDT.
     cli
 
+%ifdef EXOCORE_IS_32_BIT
     ; Addresses must be physical until we enable paging.
     mov ecx, boot_page_directory
     mov edx, KERNEL_VMA
@@ -68,6 +71,22 @@ kernel_loader:
     bts ecx, 4 ; Set CR4.PSE bit.
 
     mov cr4, ecx
+%else
+    mov ecx, cr4
+
+    ; Enable 64-bit page translation table entries.
+    bts ecx, 5 ; Set CR4.PAE bit.
+
+    mov cr4, ecx
+
+    ; Enable long mode.
+    mov ecx, 0xc0000080
+    rdmsr
+    bts eax, 8 ; Set IA-32e bit.
+    wrmsr
+
+    ; TODO: Set up long mode page table.
+%endif
 
     mov ecx, cr0
 
@@ -77,6 +96,7 @@ kernel_loader:
 
     mov cr0, ecx
 
+%ifdef EXOCORE_IS_32_BIT
     mov ecx, cr4
 
     ; Enable global paging.
@@ -87,6 +107,10 @@ kernel_loader:
     ; Get to the higher half (kernel space).
     lea ecx, [.high]
     jmp ecx
+%else
+    ; TODO: Initialize the GDT.
+    ; TODO: Jump to 64-bit code.
+%endif
 
 align 8
 .high:
