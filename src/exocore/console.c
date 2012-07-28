@@ -13,7 +13,7 @@
 #define CONSOLE_BACKGROUND CONSOLE_COLOR_GREY
 
 #ifdef EXOCORE_IS_32_BIT
-#    define CONSOLE_VIDEO_ADDRESS ((volatile ui8*)0x000b8000)
+#    define CONSOLE_VIDEO_ADDRESS ((volatile ui8*)0xC00b8000)
 #else
 #    define CONSOLE_VIDEO_ADDRESS ((volatile ui8*)0xffff8000000b8000)
 #endif
