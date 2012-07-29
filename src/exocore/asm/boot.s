@@ -14,10 +14,30 @@ bits 32
 align 8
 header:
 
-    ; Multiboot-compliant header.
+    ; Multiboot 2-compliant header.
     dd MULTIBOOT_MAGIC
-    dd MULTIBOOT_FLAGS
-    dd MULTIBOOT_CHECKSUM
+    dd MULTIBOOT_ARCHITECTURE
+    dd header_end - header
+    dd -(MULTIBOOT_MAGIC + MULTIBOOT_ARCHITECTURE + (header_end - header))
+
+module_alignment:
+
+    dw MULTIBOOT_TAG_MODULE_ALIGNMENT
+    dw 0000000000000000b
+    dd module_alignment_end - module_alignment
+
+module_alignment_end:
+
+tag_end:
+
+    ; Terminate tag list.
+    dw MULTIBOOT_TAG_END
+    dw 0000000000000000b
+    dd tag_end_end - tag_end
+
+tag_end_end:
+
+header_end:
 
 %ifdef EXOCORE_IS_32_BIT
 align PAGE_SIZE
