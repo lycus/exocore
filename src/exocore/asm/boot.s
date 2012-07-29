@@ -1,5 +1,5 @@
-%include "exocore/asm/multiboot.s"
 %include "exocore/asm/boot.s"
+%include "exocore/asm/multiboot.s"
 
 %ifndef EXOCORE_IS_32_BIT
 %include "exocore/asm/segments.s"
@@ -8,8 +8,16 @@
 ; The kernel main routine.
 extern kmain
 
-section .data
+section .boot
 bits 32
+
+align 8
+header:
+
+    ; Multiboot-compliant header.
+    dd MULTIBOOT_MAGIC
+    dd MULTIBOOT_FLAGS
+    dd MULTIBOOT_CHECKSUM
 
 %ifdef EXOCORE_IS_32_BIT
 align PAGE_SIZE
@@ -67,22 +75,37 @@ boot_gdt_pointer:
 align 8
 boot_gdt:
 
-    dq 0000000000000000000000000000000000000000000000000000000000000000b ; Null segment.
-    dq 0000000000100000100110000000000000000000000000000000000000000000b ; 64-bit kernel code segment.
-    dq 0000000000000000100100000000000000000000000000000000000000000000b ; 64-bit kernel data segment.
+    ; Null segment.
+    dw 0000000000000000b
+    dw 0000000000000000b
+    db 00000000b
+    db 00000000b
+    db 00000000b
+    db 00000000b
+    ; 64-bit kernel code segment.
+    dw 0000000000000000b
+    dw 0000000000000000b
+    db 00000000b
+    db 10011000b
+    db 00100000b
+    db 00000000b
+    ; 64-bit kernel data segment.
+    dw 0000000000000000b
+    dw 0000000000000000b
+    db 00000000b
+    db 10010000b
+    db 00000000b
+    db 00000000b
 
 boot_gdt_end:
 %endif
 
-section .text
-
 align 8
-header:
+stack_bottom:
 
-    ; Multiboot-compliant header.
-    dd MULTIBOOT_MAGIC
-    dd MULTIBOOT_FLAGS
-    dd MULTIBOOT_CHECKSUM
+    times 0x4000 db 0
+
+stack_top:
 
 global kernel_loader
 
@@ -120,15 +143,18 @@ kernel_loader:
 
     mov cr4, ecx
 
+    ; Set up the long mode page table.
+    mov ecx, pml4_base
+    mov cr3, ecx
+
     ; Enable long mode.
     mov ecx, 0xc0000080
     rdmsr
     bts eax, 8 ; Set EFER.LME bit.
     wrmsr
 
-    ; Set up the long mode page table.
-    mov ecx, pml4_base
-    mov cr3, ecx
+    ; Load the boot-time GDT.
+    lgdt [boot_gdt_pointer]
 %endif
 
     mov ecx, cr0
@@ -146,19 +172,19 @@ kernel_loader:
     bts ecx, 7 ; Set CR4.PGE bit.
 
     mov cr4, ecx
+
+    lea ecx, [high]
+    jmp high
 %else
-    ; Load the boot-time GDT.
-    lgdt [boot_gdt]
+    jmp KERNEL_CODE_SEGMENT:high
 %endif
 
-    lea ecx, [.high]
-    jmp ecx
-
-align 8
 %ifndef EXOCORE_IS_32_BIT
 bits 64
 %endif
-.high:
+
+align 8
+high:
 
     ; Set up the stack (grows down).
 %ifdef EXOCORE_IS_32_BIT
@@ -263,10 +289,3 @@ bits 64
 
     ; If the C code for some reason returns, just halt.
     hlt
-
-align 8
-stack_bottom:
-
-    times 0x4000 db 0
-
-stack_top:

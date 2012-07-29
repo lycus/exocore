@@ -6,37 +6,62 @@ kernel_vma = 0xffff800000000000;
 
 SECTIONS
 {
-    . = kernel_vma + kernel_lma;
+    . = kernel_lma;
 
-    start = .;
+    .boot :
+    {
+        boot = .;
+
+        *(.boot)
+
+        . = ALIGN(0x1000);
+    }
+
+    eboot = .;
+
+    . = . + kernel_vma;
 
     .text : AT(ADDR(.text) - kernel_vma)
     {
+        text = .;
+
         *(.text)
 
         . = ALIGN(0x1000);
     }
 
+    etext = .;
+
     .data : AT(ADDR(.data) - kernel_vma)
     {
+        data = .;
+
         *(.data)
 
         . = ALIGN(0x1000);
     }
 
+    edata = .;
+
     .rodata : AT(ADDR(.rodata) - kernel_vma)
     {
+        rodata = .;
+
         *(.rodata*)
 
         . = ALIGN(0x1000);
     }
 
+    erodata = .;
+
     .bss : AT(ADDR(.bss) - kernel_vma)
     {
+        bss = .;
+
         *(.bss)
 
         . = ALIGN(0x1000);
     }
 
-    end = .;
+    ebss = .;
 }
