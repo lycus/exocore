@@ -290,8 +290,17 @@ def dist(dst):
 def qemu(ctx):
     '''runs the kernel in QEMU with GDB server at localhost:1234'''
 
-    _run_shell(OUT, ctx, 'qemu -monitor stdio -S -s -cdrom {0}'.format('exocore.iso'))
+    _run_shell(TOP, ctx, 'qemu -monitor stdio -S -s -cdrom {0}'.format(os.path.join(OUT, 'exocore.iso')))
 
 class QEMUContext(Build.BuildContext):
     cmd = 'qemu'
     fun = 'qemu'
+
+def bochs(ctx):
+    '''runs the kernel in Bochs with GDB server at localhost:1234'''
+
+    _run_shell(TOP, ctx, 'bochs')
+
+class BochsContext(Build.BuildContext):
+    cmd = 'bochs'
+    fun = 'bochs'
