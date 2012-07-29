@@ -115,7 +115,7 @@ static void gdt_set_descriptor(const uiptr index, const ui32 base, const ui32 li
 
     entry->limit_low = limit & 0x0000ffff;
 
-    entry->flags = (ui8)((flags & 0x0f) << 4) | ((limit >> 16) & 0x0000000f);
+    entry->flags = (ui8)((flags & 0x0f) << 4) | (limit >> 16 & 0x0000000f);
 
     entry->access = access;
 }
