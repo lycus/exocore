@@ -14,29 +14,12 @@ def options(opt):
     opt.add_option('--target', action = 'store', default = 'i386', help = 'target architecture to build for (i386/x86_64)')
     opt.add_option('--mode', action = 'store', default = 'debug', help = 'the mode to compile in (debug/release)')
 
-class link(ccroot.link_task):
+class kernel(ccroot.link_task):
     "Link object files into a kernel binary"
 
     run_str = '${LD} ${KERNLINKFLAGS} -o ${TGT} ${SRC}'
-    ext_out = ['.elf']
-    inst_to = None
-
-@TaskGen.feature('kernel')
-@TaskGen.after_method('apply_link')
-def kernel(self):
-    link_output = self.link_task.outputs[0]
-
-    self.kernel_task = self.create_task('kernel',
-                                        src = link_output,
-                                        tgt = self.path.find_or_declare(link_output.change_ext('.bin').name))
-
-class kernel(Task.Task):
-    "Copy kernel code to final kernel binary"
-
-    run_str = '${OBJCOPY} ${KERNFLAGS} ${SRC} ${TGT}'
     ext_out = ['.bin']
     inst_to = None
-    color = 'CYAN'
 
     def post_run(self):
         Task.Task.post_run(self)
@@ -46,7 +29,7 @@ class kernel(Task.Task):
 @TaskGen.feature('iso')
 @TaskGen.after_method('kernel')
 def iso(self):
-    kernel_output = self.kernel_task.outputs[0]
+    kernel_output = self.link_task.outputs[0]
 
     self.iso_task = self.create_task('iso',
                                      src = kernel_output,
@@ -74,7 +57,7 @@ def configure(conf):
     conf.find_program('objcopy', var = 'OBJCOPY', mandatory = True)
     conf.find_program('grub-mkrescue', var = 'MKRESCUE', mandatory = True)
 
-    conf.env.link_PATTERN = '%s.elf'
+    conf.env.kernel_PATTERN = '%s.bin'
 
     conf.check_cc(fragment = r'''int main()
                                  {
@@ -128,10 +111,6 @@ def configure(conf):
                          'elf64-x86-64',
                          '-m',
                          'elf_x86_64'])
-
-        add_options('KERNFLAGS',
-                    ['-O',
-                     'elf32-i386'])
     else:
         conf.fatal('--target must be either i386 or x86_64.')
 
@@ -219,7 +198,7 @@ def build(bld):
 
         return [os.path.join(path, '*.c'), os.path.join(path, 'asm', '*.s')]
 
-    bld(features = 'asm c link kernel iso',
+    bld(features = 'asm c kernel iso',
         includes = 'include',
         source = bld.path.ant_glob(search_paths(os.path.join('src', 'exocore'))),
         target = 'exocore')
