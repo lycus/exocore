@@ -91,6 +91,10 @@ def configure(conf):
 
     conf.find_program('ld', var = 'LD', mandatory = True)
 
+    add_options('KERNLINKFLAGS',
+                ['-z',
+                 'max-page-size=0x1000'])
+
     if conf.options.target == 'i386' or conf.options.target == 'x86_64':
         conf.find_program('yasm', var = 'AS', mandatory = True)
         conf.load('nasm')
@@ -110,16 +114,20 @@ def configure(conf):
                          'elf32'])
 
             add_options('KERNLINKFLAGS',
-                        ['-belf32-i386',
-                         '-melf_i386'])
+                        ['-b',
+                         'elf32-i386',
+                         '-m',
+                         'elf_i386'])
         else:
             add_options('ASFLAGS',
                         ['-f',
                          'elf64'])
 
             add_options('KERNLINKFLAGS',
-                        ['-belf64-x86-64',
-                         '-melf_x86_64'])
+                        ['-b',
+                         'elf64-x86-64',
+                         '-m',
+                         'elf_x86_64'])
 
         add_options('KERNFLAGS',
                     ['-O',
