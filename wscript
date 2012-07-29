@@ -166,7 +166,8 @@ def configure(conf):
                  '-ffreestanding'])
 
     add_options('CFLAGS',
-                ['-fno-omit-frame-pointer'])
+                ['-fwrapv',
+                 '-fno-omit-frame-pointer'])
 
     add_options('CFLAGS',
                 ['-mcmodel=large'])
