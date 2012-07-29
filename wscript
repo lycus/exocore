@@ -299,7 +299,7 @@ class QEMUContext(Build.BuildContext):
 def bochs(ctx):
     '''runs the kernel in Bochs with GDB server at localhost:1234'''
 
-    _run_shell(TOP, ctx, 'bochs')
+    _run_shell(TOP, ctx, 'bochs -q')
 
 class BochsContext(Build.BuildContext):
     cmd = 'bochs'
