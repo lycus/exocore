@@ -105,7 +105,7 @@ void initialize_irq(void)
     SUCCESS("OK.\n");
 }
 
-static void gdt_set_descriptor(const uiptr index, const ui32 base, const ui32 limit, const ui8 access, const ui8 granularity)
+static void gdt_set_descriptor(const uiptr index, const ui32 base, const ui32 limit, const ui8 access, const ui8 flags)
 {
     gdt_entry_t* const entry = &gdt[index];
 
@@ -115,8 +115,7 @@ static void gdt_set_descriptor(const uiptr index, const ui32 base, const ui32 li
 
     entry->limit_low = limit & 0x0000ffff;
 
-    entry->granularity = (limit >> 16) & 0x0000000f;
-    entry->granularity |= granularity & 0x000000f0;
+    entry->flags = (ui8)((flags & 0x0f) << 4) | ((limit >> 16) & 0x0000000f);
 
     entry->access = access;
 }
@@ -128,11 +127,19 @@ void initialize_gdt(void)
     gdt_pointer.limit = sizeof(gdt_entry_t) * GDT_SIZE - 1;
     gdt_pointer.base = &gdt[0];
 
-    gdt_set_descriptor(0, 0, 0x00000000, 0x00, 0x00);  // Null segment.
-    gdt_set_descriptor(1, 0, 0xffffffff, 0x9a, 0xcf); // Kernel mode code segment.
-    gdt_set_descriptor(2, 0, 0xffffffff, 0x92, 0xcf); // Kernel mode data segment.
-    gdt_set_descriptor(3, 0, 0xffffffff, 0xfa, 0xcf); // User mode code segment.
-    gdt_set_descriptor(4, 0, 0xffffffff, 0xf2, 0xcf); // User mode data segment.
+#ifdef EXOCORE_IS_32_BIT
+    gdt_set_descriptor(0, 0x00000000, 0x00000000, 0b00000000, 0b00000000); // Null segment.
+    gdt_set_descriptor(1, 0x00000000, 0x000fffff, 0b10011000, 0b00001100); // Kernel mode code segment.
+    gdt_set_descriptor(2, 0x00000000, 0x000fffff, 0b10010010, 0b00001100); // Kernel mode data segment.
+    gdt_set_descriptor(3, 0x00000000, 0x000fffff, 0b11111000, 0b00001100); // User mode code segment.
+    gdt_set_descriptor(4, 0x00000000, 0x000fffff, 0b11110010, 0b00001100); // User mode data segment.
+#else
+    gdt_set_descriptor(0, 0x00000000, 0x00000000, 0b00000000, 0b00000000); // Null segment.
+    gdt_set_descriptor(1, 0x00000000, 0x00000000, 0b10011000, 0b00000010); // Kernel mode code segment.
+    gdt_set_descriptor(2, 0x00000000, 0x00000000, 0b10010010, 0b00000010); // Kernel mode data segment.
+    gdt_set_descriptor(3, 0x00000000, 0x00000000, 0b11111000, 0b00000010); // User mode code segment.
+    gdt_set_descriptor(4, 0x00000000, 0x00000000, 0b11110010, 0b00000010); // User mode data segment.
+#endif
 
     gdt_flush(&gdt_pointer);
 

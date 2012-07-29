@@ -27,15 +27,13 @@ gdt_flush:
 
 align 8
 .flush:
-
-    ret
 %else
-    ; GDT pointer is the first argument.
-    mov rax, [rsp + 8]
 
     ; Load the GDT.
-    lgdt [rax]
+    lgdt [rdi]
 %endif
+
+    ret
 
 global idt_flush
 
@@ -49,11 +47,8 @@ idt_flush:
     ; Load the IDT.
     lidt [eax]
 %else
-    ; IDT pointer is the first argument.
-    mov rax, [rsp + 8]
-
     ; Load the GDT.
-    lidt [rax]
+    lidt [rdi]
 %endif
 
     ret

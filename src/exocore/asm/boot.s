@@ -120,13 +120,6 @@ boot_gdt:
 boot_gdt_end:
 %endif
 
-align 8
-stack_bottom:
-
-    times 0x4000 db 0
-
-stack_top:
-
 global kernel_loader
 
 align 8
@@ -137,8 +130,8 @@ kernel_loader:
     cli
 
     ; Back up Multiboot information.
-    mov esi, ebx
-    mov edi, eax
+    mov edi, eax ; Magic number.
+    mov esi, ebx ; Info structure pointer.
 
 %ifdef EXOCORE_IS_32_BIT
     ; Addresses must be physical until we enable paging.
@@ -194,13 +187,39 @@ kernel_loader:
     mov cr4, ecx
 
     lea ecx, [high]
-    jmp high
+    jmp ecx
 %else
-    jmp KERNEL_CODE_SEGMENT:high
+    jmp KERNEL_CODE_SEGMENT:high64 - KERNEL_VMA
 %endif
+
+section .text
 
 %ifndef EXOCORE_IS_32_BIT
 bits 64
+%endif
+
+align 8
+stack_bottom:
+
+    times 0x4000 db 0
+
+stack_top:
+
+%ifndef EXOCORE_IS_32_BIT
+align 8
+high64:
+
+    ; Establish a 32-bit stack.
+    mov rsp, stack_top - KERNEL_VMA
+
+    push KERNEL_CODE_SEGMENT
+
+    mov rax, (KERNEL_VMA >> 32) << 32
+    or rax, high - (KERNEL_VMA & 0xffffffff00000000)
+
+    push rax
+
+    ret
 %endif
 
 align 8
@@ -210,7 +229,8 @@ high:
 %ifdef EXOCORE_IS_32_BIT
     mov esp, stack_top
 %else
-    mov rsp, stack_top
+    mov rsp, (KERNEL_VMA >> 32) << 32
+    or rsp, stack_top - (KERNEL_VMA & 0xffffffff00000000)
 %endif
 
     ; Reset EFLAGS to a known state.
@@ -299,9 +319,10 @@ high:
     push esi
     push edi
 %else
-    push rsp
-    push rsi
-    push rdi
+
+    mov rdi, rdi
+    mov rsi, rsi
+    mov rdx, rsp
 %endif
 
     ; Start the kernel. Expects a signature like: void kmain(ui32, multiboot_info*, void*)

@@ -9,7 +9,7 @@ typedef struct gdt_entry
     ui16 base_low;  // The lower 16 bits of the base.
     ui8 base_middle; // The next 8 bits of the base.
     ui8 access; // Access flags; determine what ring this segment can be used in.
-    ui8 granularity;
+    ui8 flags;
     ui8 base_high; // The last 8 bits of the base.
 } attr(packed) gdt_entry_t;
 
