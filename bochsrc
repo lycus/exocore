@@ -4,7 +4,7 @@ ata1-slave:  type=cdrom, path="build/exocore.iso", status=inserted
 boot: cdrom
 cpu: count=2:4, reset_on_triple_fault=0
 magic_break: enabled=1
-#debug_symbols: file=build/exocore.bin
+debug_symbols: file=build/exocore.sym
 #vga: extension=vbe
 panic: action=report
 error: action=report

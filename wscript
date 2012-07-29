@@ -43,6 +43,23 @@ class iso(Task.Task):
     inst_to = None
     color = 'PINK'
 
+@TaskGen.feature('syms')
+@TaskGen.after_method('kernel')
+def syms(self):
+    kernel_output = self.link_task.outputs[0]
+
+    self.syms_task = self.create_task('syms',
+                                      src = kernel_output,
+                                      tgt = self.path.find_or_declare(kernel_output.change_ext('.sym').name))
+
+class syms(Task.Task):
+    "Build symbol list for a binary"
+
+    run_str = '${NM} -n ${SRC} | grep -v \'\( [aUw] \)\|\(__crc_\)\|\( \$[adt]\)\' | awk \'{print $1, $3}\' > ${TGT}'
+    ext_out = ['.sym']
+    inst_to = None
+    color = 'CYAN'
+
 def configure(conf):
     conf.env.TARGET = conf.options.target
 
@@ -54,7 +71,7 @@ def configure(conf):
     conf.load('ar')
     conf.find_program('clang', var = 'CC', mandatory = True)
     conf.load('gcc')
-    conf.find_program('objcopy', var = 'OBJCOPY', mandatory = True)
+    conf.find_program('nm', var = 'NM', mandatory = True)
     conf.find_program('grub-mkrescue', var = 'MKRESCUE', mandatory = True)
 
     conf.env.kernel_PATTERN = '%s.bin'
@@ -201,7 +218,7 @@ def build(bld):
 
         return [os.path.join(path, '*.c'), os.path.join(path, 'asm', '*.s')]
 
-    bld(features = 'asm c kernel iso',
+    bld(features = 'asm c kernel syms iso',
         includes = 'include',
         source = bld.path.ant_glob(search_paths(os.path.join('src', 'exocore'))),
         target = 'exocore')
