@@ -149,7 +149,7 @@ def configure(conf):
                  conf.options.target])
 
     add_options('CFLAGS',
-                ['-std=gnu99',
+                ['-std=gnu11',
                  '-fms-extensions',
                  '-fborland-extensions',
                  '-fblocks'])

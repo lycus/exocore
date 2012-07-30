@@ -54,4 +54,6 @@ attr(noreturn) void panic(const char* const message);
 #    define ASSERT(CND)
 #endif
 
+#define STATIC_ASSERT(CND) _Static_assert(CND, STRINGIFY(CND))
+
 #endif
