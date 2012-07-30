@@ -168,7 +168,11 @@ isr_common_stub:
     sti
 
     ; Return from the ISR.
+%ifdef EXOCORE_IS_32_BIT
     iretd
+%else
+    iretq
+%endif
 
 ; Helper macro for defining IRQs.
 %macro irq 2
@@ -285,4 +289,8 @@ irq_common_stub:
     sti
 
     ; Return from the IRQ.
+%ifdef EXOCORE_IS_32_BIT
     iretd
+%else
+    iretq
+%endif
