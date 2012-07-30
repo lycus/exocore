@@ -175,7 +175,7 @@ kernel_loader:
 
     mov cr0, ecx
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     mov ecx, cr4
 
     ; Enable global paging.
