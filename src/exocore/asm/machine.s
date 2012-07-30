@@ -7,6 +7,14 @@ halt_machine:
 
     hlt
 
+global spin_pause
+
+align 8
+spin_pause:
+
+    pause
+    ret
+
 global breakpoint
 
 align 8

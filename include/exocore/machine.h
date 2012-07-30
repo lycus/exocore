@@ -4,6 +4,8 @@
 // Immediately halts the machine. This is irrecoverable.
 attr(noreturn) void halt_machine(void);
 
+void spin_pause(void);
+
 void breakpoint(void);
 
 #endif

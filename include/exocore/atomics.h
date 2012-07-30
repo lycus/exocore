@@ -31,4 +31,7 @@
 #define atomic_fetch_or(PTR, VAL) __atomic_fetch_or(PTR, VAL, __ATOMIC_SEQ_CST)
 #define atomic_fetch_nand(PTR, VAL) __atomic_fetch_nand(PTR, VAL, __ATOMIC_SEQ_CST)
 
+#define atomic_test_and_set(PTR) __atomic_test_and_set(PTR, __ATOMIC_SEQ_CST)
+#define atomic_clear(PTR) __atomic_clear(PTR, __ATOMIC_SEQ_CST)
+
 #endif
