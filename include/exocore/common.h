@@ -30,6 +30,11 @@ typedef _Bool bool;
 
 #define attr(X) __attribute__((X))
 
+#define expect(CND) __builtin_expect(CND, true)
+#define prefetch(PTR, WRT) __builtin_prefetch(PTR, WRT)
+
+#define bitsof(X) (sizeof(X) * 8)
+
 #define _STRINGIFY(X) #X
 #define STRINGIFY(X) _STRINGIFY(X)
 
@@ -41,15 +46,12 @@ attr(noreturn) void panic(const char* const message);
 #    define ASSERT(CND) \
          do \
          { \
-             if (!(CND)) \
+             if (!expect(!!(CND))) \
                  PANIC("Assertion failed: " STRINGIFY(CND)); \
          } \
          while (false);
 #else
 #    define ASSERT(CND)
 #endif
-
-#define expect(CND) __builtin_expect(CND, true)
-#define prefetch(PTR, WRT) __builtin_prefetch(PTR, WRT)
 
 #endif
