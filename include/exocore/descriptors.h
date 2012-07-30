@@ -13,11 +13,15 @@ typedef struct gdt_entry
     ui8 base_high; // The last 8 bits of the base.
 } attr(packed) gdt_entry_t;
 
+STATIC_ASSERT(sizeof(gdt_entry_t) == 8);
+
 typedef struct gdt_pointer
 {
     ui16 limit; // The upper 16 bits of all selector limits.
     gdt_entry_t* base; // The address of the first gdt_entry_t struct.
 } attr(packed) gdt_pointer_t;
+
+STATIC_ASSERT(sizeof(gdt_pointer_t) == EXOCORE_IS_32_BIT ? 6 : 10);
 
 typedef struct idt_entry
 {
@@ -35,11 +39,15 @@ typedef struct idt_entry
 #endif
 } attr(packed) idt_entry_t;
 
+STATIC_ASSERT(sizeof(gdt_entry_t) == EXOCORE_IS_32_BIT ? 8 : 16);
+
 typedef struct idt_pointer
 {
    ui16 limit;
    idt_entry_t* base; // The address of the first idt_entry_t struct.
 } attr(packed) idt_pointer_t;
+
+STATIC_ASSERT(sizeof(idt_pointer_t) == EXOCORE_IS_32_BIT ? 6 : 10);
 
 // Sets up the GDT.
 void initialize_gdt(void);
