@@ -7,7 +7,7 @@ global gdt_flush
 align 8
 gdt_flush:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     ; GDT pointer is the first argument.
     mov eax, [esp + 4]
 
@@ -40,7 +40,7 @@ global idt_flush
 align 8
 idt_flush:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     ; IDT pointer is the first argument.
     mov eax, [esp + 4]
 

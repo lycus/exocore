@@ -58,7 +58,7 @@ typedef enum interrupt_id : uiptr
 typedef struct interrupt_info
 {
     const uiptr ds; // Data segment selector.
-#ifndef EXOCORE_IS_32_BIT
+#if !EXOCORE_IS_32_BIT
     const uiptr r15; // General purpose R15 register.
     const uiptr r14; // General purpose R14 register.
     const uiptr r13; // General purpose R13 register.

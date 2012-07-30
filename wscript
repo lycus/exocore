@@ -109,7 +109,7 @@ def configure(conf):
 
         if conf.options.target == 'i386':
             add_options('ASFLAGS',
-                        ['-DEXOCORE_IS_32_BIT'])
+                        ['-DEXOCORE_IS_32_BIT=1'])
 
             add_options('ASFLAGS',
                         ['-f',
@@ -121,6 +121,9 @@ def configure(conf):
                          '-m',
                          'elf_i386'])
         else:
+            add_options('ASFLAGS',
+                        ['-DEXOCORE_IS_32_BIT=0'])
+
             add_options('ASFLAGS',
                         ['-f',
                          'elf64'])
@@ -142,7 +145,10 @@ def configure(conf):
 
     if conf.options.target == 'i386':
         add_options('CFLAGS',
-                    ['-DEXOCORE_IS_32_BIT'])
+                    ['-DEXOCORE_IS_32_BIT=1'])
+    else:
+        add_options('CFLAGS',
+                    ['-DEXOCORE_IS_32_BIT=0'])
 
     add_options('CFLAGS',
                 ['-ccc-host-triple',

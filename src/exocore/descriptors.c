@@ -132,7 +132,7 @@ void initialize_gdt(void)
     gdt_pointer.limit = sizeof(gdt_entry_t) * GDT_SIZE - 1;
     gdt_pointer.base = &gdt[0];
 
-#ifdef EXOCORE_IS_32_BIT
+#if EXOCORE_IS_32_BIT
     gdt_set_descriptor(0, 0x00000000, 0x00000000, 0b00000000, 0b00000000); // Null segment.
     gdt_set_descriptor(1, 0x00000000, 0x000fffff, 0b10011000, 0b00001100); // Kernel mode code segment.
     gdt_set_descriptor(2, 0x00000000, 0x000fffff, 0b10010010, 0b00001100); // Kernel mode data segment.
@@ -158,7 +158,7 @@ static void idt_set_descriptor(const uiptr index, void (* const base)(void), con
     ASSERT(!((uiptr)base % sizeof(uiptr)));
     ASSERT(selector);
     ASSERT(!(selector % sizeof(gdt_entry_t)));
-#ifdef EXOCORE_IS_32_BIT
+#if EXOCORE_IS_32_BIT
     ASSERT(!(flags & 0b00010001));
     ASSERT(flags & 0b00000110);
 #else
@@ -170,7 +170,7 @@ static void idt_set_descriptor(const uiptr index, void (* const base)(void), con
 
     entry->selector = selector;
 
-#ifdef EXOCORE_IS_32_BIT
+#if EXOCORE_IS_32_BIT
     entry->base_low = addr & 0x0000ffff;
     entry->base_high = (addr >> 16) & 0x0000ffff;
 
@@ -195,7 +195,7 @@ void initialize_idt(void)
     idt_pointer.limit = sizeof(idt_entry_t) * IDT_SIZE - 1;
     idt_pointer.base = &idt[0];
 
-#ifdef EXOCORE_IS_32_BIT
+#if EXOCORE_IS_32_BIT
     const ui8 flags = 0b11101110;
 #else
     const ui16 flags = 0b111011100000000; // TODO: We may want to use the IST later.

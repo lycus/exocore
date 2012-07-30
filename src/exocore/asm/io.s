@@ -5,7 +5,7 @@ global io_read_ui8
 align 8
 io_read_ui8:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     mov dx, [esp + 4] ; Port is the first argument.
 %else
     mov dx, [rsp + 8] ; Port is the first argument.
@@ -21,7 +21,7 @@ global io_read_ui16
 align 8
 io_read_ui16:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     mov dx, [esp + 4] ; Port is the first argument.
 %else
     mov dx, [rsp + 8] ; Port is the first argument.
@@ -37,7 +37,7 @@ global io_read_ui32
 align 8
 io_read_ui32:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     mov dx, [esp + 4] ; Port is the first argument.
 %else
     mov dx, [rsp + 8] ; Port is the first argument.
@@ -53,7 +53,7 @@ global io_write_ui8
 align 8
 io_write_ui8:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     mov al, [esp + 8] ; Value is the second argument.
     mov dx, [esp + 4] ; Port is the first argument.
 %else
@@ -71,7 +71,7 @@ global io_write_ui16
 align 8
 io_write_ui16:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     mov al, [esp + 8] ; Value is the second argument.
     mov dx, [esp + 4] ; Port is the first argument.
 %else
@@ -89,7 +89,7 @@ global io_write_ui32
 align 8
 io_write_ui32:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     mov al, [esp + 8] ; Value is the second argument.
     mov dx, [esp + 4] ; Port is the first argument.
 %else

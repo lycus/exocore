@@ -90,7 +90,7 @@ extern isr_handler
 align 8
 isr_common_stub:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     ; Save all GPRs.
     pushad
 
@@ -127,7 +127,7 @@ isr_common_stub:
     ; Expects a signature like: void isr_handler(interrupt_info_t)
     call isr_handler
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     ; Reload the original data segment descriptor.
     pop eax
 
@@ -168,7 +168,7 @@ isr_common_stub:
     sti
 
     ; Return from the ISR.
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     iretd
 %else
     iretq
@@ -212,7 +212,7 @@ extern irq_handler
 align 8
 irq_common_stub:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     ; Save all GPRs.
     pushad
 
@@ -249,7 +249,7 @@ irq_common_stub:
     ; Expects a signature like: void irq_handler(interrupt_info_t)
     call irq_handler
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     ; Reload the original data segment descriptor.
     pop eax
     mov ds, ax
@@ -289,7 +289,7 @@ irq_common_stub:
     sti
 
     ; Return from the IRQ.
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     iretd
 %else
     iretq

@@ -1,9 +1,6 @@
 %include "exocore/asm/boot.s"
 %include "exocore/asm/multiboot.s"
-
-%ifndef EXOCORE_IS_32_BIT
 %include "exocore/asm/segments.s"
-%endif
 
 ; The kernel main routine.
 extern kmain
@@ -39,7 +36,7 @@ tag_end_end:
 
 header_end:
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
 align PAGE_SIZE
 boot_page_directory:
 
@@ -133,7 +130,7 @@ kernel_loader:
     mov edi, eax ; Magic number.
     mov esi, ebx ; Info structure pointer.
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     ; Addresses must be physical until we enable paging.
     mov ecx, boot_page_directory
     mov edx, KERNEL_VMA
@@ -194,7 +191,7 @@ kernel_loader:
 
 section .text
 
-%ifndef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT == 0
 bits 64
 %endif
 
@@ -205,7 +202,7 @@ stack_bottom:
 
 stack_top:
 
-%ifndef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT == 0
 align 8
 high64:
 
@@ -226,7 +223,7 @@ align 8
 high:
 
     ; Set up the stack (grows down).
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     mov esp, stack_top
 %else
     mov rsp, (KERNEL_VMA >> 32) << 32
@@ -240,7 +237,7 @@ high:
     bts eax, 12 ; Set EFLAGS.IOPL.1 bit.
     bts eax, 13 ; Set EFLAGS.IOPL.2 bit.
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     push eax
     popfd
 %else
@@ -248,7 +245,7 @@ high:
     popfq
 %endif
 
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     mov ecx, cr0
 
     ; Enable x87 and SSE.
@@ -307,14 +304,14 @@ high:
 %endif
 
     ; Nullify the stack frame pointer.
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     xor ebp, ebp
 %else
     xor rbp, rbp
 %endif
 
     ; Pass Multiboot information and stack pointer.
-%ifdef EXOCORE_IS_32_BIT
+%if EXOCORE_IS_32_BIT
     push esp
     push esi
     push edi

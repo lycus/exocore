@@ -23,7 +23,7 @@ typedef struct idt_entry
 {
     ui16 base_low; // The first 16 bits of the address to jump to when this interrupt fires.
     ui16 selector; // Kernel segment selector.
-#ifdef EXOCORE_IS_32_BIT
+#if EXOCORE_IS_32_BIT
     ui8 reserved; // This must always be zero.
     ui8 flags; // More flags. See documentation.
     ui16 base_high; // The last 16 bits of the address to jump to.
