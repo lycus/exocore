@@ -49,4 +49,7 @@ attr(noreturn) void panic(const char* const message);
 #    define ASSERT(CND)
 #endif
 
+#define expect(CND) __builtin_expect(CND, true)
+#define prefetch(PTR, WRT) __builtin_prefetch(PTR, WRT)
+
 #endif
