@@ -45,8 +45,6 @@ boot_page_directory:
     dd 00000000000000000000000010000011b
     times PAGE_DIRECTORY_ENTRIES - KERNEL_PAGE_NUMBER - 2 dd 00000000000000000000000000000000b
 %else
-global pml4_base
-
 align PAGE_SIZE
 pml4_base:
 
