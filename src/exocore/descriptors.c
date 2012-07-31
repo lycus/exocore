@@ -13,8 +13,8 @@ static idt_pointer_t idt_pointer attr(aligned(8)); // Pointer to the IDT.
 
 // These functions are used to activate new GDTs/IDTs.
 
-attr(nonnull) extern void gdt_flush(gdt_pointer_t* gdt);
-attr(nonnull) extern void idt_flush(idt_pointer_t* idt);
+attr(nonnull) extern void gdt_flush(const gdt_pointer_t* const gdt);
+attr(nonnull) extern void idt_flush(const idt_pointer_t* const idt);
 
 // Interrupt service routines defined in assembly land.
 
