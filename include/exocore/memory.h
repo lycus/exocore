@@ -1,6 +1,8 @@
 #ifndef EXOCORE_H_MEMORY
 #define EXOCORE_H_MEMORY
 
+#include "exocore/common.h"
+
 attr(const) static inline uiptr align_to(const uiptr ptr, const uiptr alignment)
 {
     const uiptr val = ptr + alignment - 1;
