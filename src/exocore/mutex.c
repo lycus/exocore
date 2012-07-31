@@ -2,7 +2,7 @@
 #include "exocore/machine.h"
 #include "exocore/mutex.h"
 
-void mutex_acquire(mutex_t* mutex)
+void mutex_acquire(mutex_t* const mutex)
 {
     do
     {
@@ -12,12 +12,12 @@ void mutex_acquire(mutex_t* mutex)
     while (atomic_test_and_set(&mutex->locked));
 }
 
-void mutex_release(mutex_t* mutex)
+void mutex_release(mutex_t* const mutex)
 {
     atomic_clear(&mutex->locked);
 }
 
-bool mutex_locked(mutex_t* mutex)
+bool mutex_locked(const mutex_t* const mutex)
 {
     return atomic_load(&mutex->locked);
 }
