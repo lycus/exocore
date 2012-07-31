@@ -8,8 +8,6 @@ a so-called exokernel; it only provides the bare minimum of abstraction needed
 around the hardware. This allows for most aspects of real operating systems to
 be implemented in user space.
 
-ExoCore is based on code from the XOmB project.
-
 For further information, see:
 
     * LICENSE
