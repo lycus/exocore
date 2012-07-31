@@ -314,9 +314,7 @@ high:
     push esi
     push edi
 %else
-
-    mov rdi, rdi
-    mov rsi, rsi
+    ; RDI and RSI are already set.
     mov rdx, rsp
 %endif
 

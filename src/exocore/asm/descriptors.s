@@ -8,8 +8,7 @@ align 8
 gdt_flush:
 
 %if EXOCORE_IS_32_BIT
-    ; GDT pointer is the first argument.
-    mov eax, [esp + 4]
+    mov eax, [esp + 4] ; GDT pointer is the first argument.
 
     ; Load the GDT.
     lgdt [eax]
@@ -41,8 +40,7 @@ align 8
 idt_flush:
 
 %if EXOCORE_IS_32_BIT
-    ; IDT pointer is the first argument.
-    mov eax, [esp + 4]
+    mov eax, [esp + 4] ; IDT pointer is the first argument.
 
     ; Load the IDT.
     lidt [eax]

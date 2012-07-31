@@ -8,7 +8,7 @@ io_read_ui8:
 %if EXOCORE_IS_32_BIT
     mov dx, [esp + 4] ; Port is the first argument.
 %else
-    mov dx, [rsp + 8] ; Port is the first argument.
+    mov rdx, rdi ; Port is the first argument.
 %endif
 
     ; Read a byte from the port in dx.
@@ -24,7 +24,7 @@ io_read_ui16:
 %if EXOCORE_IS_32_BIT
     mov dx, [esp + 4] ; Port is the first argument.
 %else
-    mov dx, [rsp + 8] ; Port is the first argument.
+    mov rdx, rdi ; Port is the first argument.
 %endif
 
     ; Read a word from the port in dx.
@@ -40,7 +40,7 @@ io_read_ui32:
 %if EXOCORE_IS_32_BIT
     mov dx, [esp + 4] ; Port is the first argument.
 %else
-    mov dx, [rsp + 8] ; Port is the first argument.
+    mov rdx, rdi ; Port is the first argument.
 %endif
 
     ; Read a dword from the port in dx.
@@ -57,8 +57,8 @@ io_write_ui8:
     mov al, [esp + 8] ; Value is the second argument.
     mov dx, [esp + 4] ; Port is the first argument.
 %else
-    mov al, [esp + 16] ; Value is the second argument.
-    mov dx, [esp + 8] ; Port is the first argument.
+    mov rdx, rdi ; Port is the first argument.
+    mov eax, esi ; Value is the second argument.
 %endif
 
     ; Write a byte to the port in dx.
@@ -75,8 +75,8 @@ io_write_ui16:
     mov al, [esp + 8] ; Value is the second argument.
     mov dx, [esp + 4] ; Port is the first argument.
 %else
-    mov al, [esp + 16] ; Value is the second argument.
-    mov dx, [esp + 8] ; Port is the first argument.
+    mov rdx, rdi ; Port is the first argument.
+    mov eax, esi ; Value is the second argument.
 %endif
 
     ; Write a word to the port in dx.
@@ -93,8 +93,8 @@ io_write_ui32:
     mov al, [esp + 8] ; Value is the second argument.
     mov dx, [esp + 4] ; Port is the first argument.
 %else
-    mov al, [esp + 16] ; Value is the second argument.
-    mov dx, [esp + 8] ; Port is the first argument.
+    mov rdx, rdi ; Port is the first argument.
+    mov eax, esi ; Value is the second argument.
 %endif
 
     ; Write a dword to the port in dx.
