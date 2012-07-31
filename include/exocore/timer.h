@@ -9,6 +9,6 @@
 void initialize_pit(void);
 
 // Gets the amount of ticks (milliseconds) since boot. Can overflow.
-ui64 get_ticks();
+attr(pure) inline ui64 get_ticks(void);
 
 #endif

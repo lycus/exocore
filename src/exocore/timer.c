@@ -38,7 +38,7 @@ void initialize_pit(void)
     SUCCESS("OK.\n");
 }
 
-ui64 get_ticks()
+ui64 get_ticks(void)
 {
     return current_ticks;
 }
