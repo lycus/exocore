@@ -21,7 +21,7 @@ typedef struct page_table_entry
             bool pat : 1;
             bool global : 1; // Indicates whether this translation is global.
             ui8 kernel_bits1 : 3;
-            ui64 frame : 40; // Physical address of the frame shifted right by 24 bits.
+            uiptr pointer : 40; // Physical address of the frame shifted right by 24 bits.
             bool unused : 1; // Must be 0.
             ui16 kernel_bits2 : 10;
             bool disable_execute : 1; // If set, and the IA32_EFER.NXE bit is set, this entry cannot be executed.
@@ -37,7 +37,7 @@ STATIC_ASSERT(sizeof(page_table_entry_t) == 8);
 
 typedef struct page_table
 {
-    page_table_entry_t pages[PAGE_TABLE_ENTRIES];
+    page_table_entry_t entries[PAGE_TABLE_ENTRIES];
 } attr(packed) page_table_t;
 
 STATIC_ASSERT(sizeof(page_table_t) == sizeof(page_table_entry_t) * PAGE_TABLE_ENTRIES);
@@ -57,7 +57,7 @@ typedef struct page_directory_entry
             bool kernel_bit : 1;
             bool is_4_mb : 1; // If set, this entry maps a 4 MB page.
             ui8 kernel_bits1 : 4;
-            ui64 table : 40; // Physical address of the page table shifted right by 24 bits.
+            uiptr pointer : 40; // Physical address of the page table shifted right by 24 bits.
             bool unused : 1; // Must be 0.
             ui16 kernel_bits2 : 10;
             bool disable_execute : 1; // If set, and the IA32_EFER.NXE bit is set, this entry cannot be executed.
@@ -93,7 +93,7 @@ typedef struct pml_4_entry
             bool kernel_bit : 1;
             bool unused1 : 1; // Must be 0.
             ui8 kernel_bits1 : 4;
-            ui64 pointer : 40; // Physical address of the page directory pointer table shifted right by 24 bits.
+            uiptr pointer : 40; // Physical address of the page directory pointer table shifted right by 24 bits.
             bool unused2 : 1; // Must be 0.
             ui16 kernel_bits2 : 10;
             bool disable_execute : 1; // If set, and the IA32_EFER.NXE bit is set, this entry cannot be executed.
@@ -129,7 +129,7 @@ typedef struct page_directory_pointer_table_entry
             bool kernel_bit : 1;
             bool is_1_gb : 1; // If set, this entry maps a 1 GB page.
             ui8 kernel_bits1 : 4;
-            ui64 pointer : 40; // Physical address of the page directory shifted right by 24 bits.
+            uiptr pointer : 40; // Physical address of the page directory shifted right by 24 bits.
             bool unused : 1; // Must be 0.
             ui16 kernel_bits2 : 10;
             bool disable_execute : 1; // If set, and the IA32_EFER.NXE bit is set, this entry cannot be executed.
