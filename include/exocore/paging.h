@@ -27,7 +27,7 @@ typedef struct page_table_entry
             bool disable_execute : 1; // If set, and the IA32_EFER.NXE bit is set, this entry cannot be executed.
         };
 
-        ui32 raw;
+        ui64 raw;
     };
 } attr(packed) page_table_entry_t;
 
@@ -63,7 +63,7 @@ typedef struct page_directory_entry
             bool disable_execute : 1; // If set, and the IA32_EFER.NXE bit is set, this entry cannot be executed.
         };
 
-        ui32 raw;
+        ui64 raw;
     };
 } attr(packed) page_directory_entry_t;
 
