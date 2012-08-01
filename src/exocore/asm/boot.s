@@ -158,7 +158,7 @@ kernel_loader:
     ; Enable long mode.
     mov ecx, 0xc0000080
     rdmsr
-    bts eax, 8 ; Set EFER.LME bit.
+    bts eax, 8 ; Set IA32_EFER.LME bit.
     wrmsr
 
     ; Load the boot-time GDT.
