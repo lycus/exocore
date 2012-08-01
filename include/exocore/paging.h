@@ -25,7 +25,7 @@ typedef struct page_table_entry
             bool unused : 1; // Must be 0.
             ui16 kernel_bits2 : 10;
             bool disable_execute : 1; // If set, and the IA32_EFER.NXE bit is set, this entry cannot be executed.
-        };
+        } attr(packed);
 
         ui64 raw;
     };
@@ -61,7 +61,7 @@ typedef struct page_directory_entry
             bool unused : 1; // Must be 0.
             ui16 kernel_bits2 : 10;
             bool disable_execute : 1; // If set, and the IA32_EFER.NXE bit is set, this entry cannot be executed.
-        };
+        } attr(packed);
 
         ui64 raw;
     };
@@ -97,7 +97,7 @@ typedef struct pml_4_entry
             bool unused2 : 1; // Must be 0.
             ui16 kernel_bits2 : 10;
             bool disable_execute : 1; // If set, and the IA32_EFER.NXE bit is set, this entry cannot be executed.
-        };
+        } attr(packed);
 
         ui64 raw;
     };
@@ -133,7 +133,7 @@ typedef struct page_directory_pointer_table_entry
             bool unused : 1; // Must be 0.
             ui16 kernel_bits2 : 10;
             bool disable_execute : 1; // If set, and the IA32_EFER.NXE bit is set, this entry cannot be executed.
-        };
+        } attr(packed);
 
         ui64 raw;
     };

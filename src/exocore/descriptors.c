@@ -5,6 +5,7 @@
 #include "exocore/idt.h"
 #include "exocore/interrupts.h"
 #include "exocore/io.h"
+#include "exocore/memory.h"
 #include "exocore/pic.h"
 
 static gdt_entry_t gdt[GDT_SIZE] attr(aligned(8)); // The global descriptor table.
@@ -108,23 +109,35 @@ void initialize_irq(void)
     SUCCESS("OK.\n");
 }
 
-static void gdt_set_descriptor(const uiptr index, const ui32 base, const ui32 limit, const ui8 access, const ui8 flags)
+static void gdt_set_descriptor(const uiptr index, const ui8 dpl, const bool executable, const bool direction_conforming)
 {
     ASSERT(index < GDT_SIZE);
-    ASSERT(limit ? builtin_clz32(limit) >= bitsof(limit) - 20 : true);
-    ASSERT(flags ? builtin_clz32(flags) >= bitsof(flags) - 4 : true);
+    ASSERT(dpl <= MAX_DPL);
 
     gdt_entry_t* const entry = &gdt[index];
 
-    entry->base_low = base & 0x0000ffff;
-    entry->base_middle = (base >> 16) & 0x000000ff;
-    entry->base_high = (base >> 24) & 0x000000ff;
+    entry->base_low = 0;
+    entry->base_middle = 0;
+    entry->base_high = 0;
 
-    entry->limit_low = limit & 0x0000ffff;
+    entry->limit_low = 0;
+    entry->limit_high = 0;
 
-    entry->flags = (ui8)((flags & 0x0f) << 4) | (limit >> 16 & 0x0000000f);
+    entry->dpl = dpl;
 
-    entry->access = access;
+    entry->is_executable = executable;
+    entry->direction_conforming = direction_conforming;
+
+    entry->is_long_mode = index ? true : false;
+    entry->is_32_bit = false;
+    entry->is_page = false;
+
+    entry->segment_type = index ? true : false; // Not a system segment.
+    entry->readable_writable = index ? true : false;
+    entry->accessed = false;
+    entry->present = index ? true : false;
+
+    entry->kernel_bit = false;
 }
 
 void initialize_gdt(void)
@@ -134,58 +147,44 @@ void initialize_gdt(void)
     gdt_pointer.limit = sizeof(gdt_entry_t) * GDT_SIZE - 1;
     gdt_pointer.base = &gdt[0];
 
-#if EXOCORE_IS_32_BIT
-    gdt_set_descriptor(0, 0x00000000, 0x00000000, 0b00000000, 0b00000000); // Null segment.
-    gdt_set_descriptor(1, 0x00000000, 0x000fffff, 0b10011000, 0b00001100); // Kernel mode code segment.
-    gdt_set_descriptor(2, 0x00000000, 0x000fffff, 0b10010010, 0b00001100); // Kernel mode data segment.
-    gdt_set_descriptor(3, 0x00000000, 0x000fffff, 0b11111000, 0b00001100); // User mode code segment.
-    gdt_set_descriptor(4, 0x00000000, 0x000fffff, 0b11110010, 0b00001100); // User mode data segment.
-#else
-    gdt_set_descriptor(0, 0x00000000, 0x00000000, 0b00000000, 0b00000000); // Null segment.
-    gdt_set_descriptor(1, 0x00000000, 0x00000000, 0b10011000, 0b00000010); // Kernel mode code segment.
-    gdt_set_descriptor(2, 0x00000000, 0x00000000, 0b10010010, 0b00000010); // Kernel mode data segment.
-    gdt_set_descriptor(3, 0x00000000, 0x00000000, 0b11111000, 0b00000010); // User mode code segment.
-    gdt_set_descriptor(4, 0x00000000, 0x00000000, 0b11110010, 0b00000010); // User mode data segment.
-#endif
+    gdt_set_descriptor(0, 0, false, false); // Null segment descriptor.
+    gdt_set_descriptor(1, 0, true, false); // Kernel code segment descriptor.
+    gdt_set_descriptor(2, 0, false, false); // Kernel data segment descriptor.
+    gdt_set_descriptor(3, 3, true, false); // User code segment descriptor.
+    gdt_set_descriptor(4, 3, false, false); // User data segment descriptor.
 
     gdt_flush(&gdt_pointer);
 
     SUCCESS("OK.\n");
 }
 
-static void idt_set_descriptor(const uiptr index, void (* const base)(void), const ui16 selector, const ui16 flags)
+static void idt_set_descriptor(const uiptr index, void (* const base)(void), const ui16 selector, const ui8 dpl)
 {
     ASSERT(index < IDT_SIZE);
     ASSERT(base);
-    ASSERT(!((uiptr)base % sizeof(uiptr)));
+    ASSERT(is_aligned((uiptr)base, sizeof(uiptr)));
     ASSERT(selector);
-    ASSERT(!(selector % sizeof(gdt_entry_t)));
-#if EXOCORE_IS_32_BIT
-    ASSERT(!(flags & 0b00010001));
-    ASSERT(flags & 0b00000110);
-#else
-    ASSERT(!(flags & 0b0001000001111100));
-#endif
+    ASSERT(is_aligned(selector, sizeof(gdt_entry_t)));
+    ASSERT(dpl <= MAX_DPL);
 
     const uiptr addr = (uiptr)base;
     idt_entry_t* const entry = &idt[index];
 
-    entry->selector = selector;
-
-#if EXOCORE_IS_32_BIT
     entry->base_low = addr & 0x0000ffff;
-    entry->base_high = (addr >> 16) & 0x0000ffff;
-
-    entry->flags = (ui8)flags;
-#else
-    entry->base_low = addr & 0x0000ffff;
-    entry->base_middle = (addr >> 16) & 0x0000ffff;
+    entry->base_middle = addr >> 16 & 0x0000ffff;
     entry->base_high = addr >> 32;
 
-    entry->flags = flags;
-#endif
+    entry->selector = selector;
+    entry->dpl = dpl;
 
-    entry->reserved = 0;
+    entry->ist = 0; // TODO: We may want to use this...
+
+    entry->type = 0b1110; // 32-bit/64-bit interrupt gate.
+    entry->present = true;
+
+    entry->unused1 = 0;
+    entry->unused2 = false;
+    entry->unused3 = 0;
 }
 
 void initialize_idt(void)
@@ -197,61 +196,57 @@ void initialize_idt(void)
     idt_pointer.limit = sizeof(idt_entry_t) * IDT_SIZE - 1;
     idt_pointer.base = &idt[0];
 
-#if EXOCORE_IS_32_BIT
-    const ui8 flags = 0b11101110;
-#else
-    const ui16 flags = 0b111011100000000; // TODO: We may want to use the IST later.
-#endif
+    const ui8 dpl = 3;
 
-    idt_set_descriptor(ISR_CPU_START, &isr_0, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 1, &isr_1, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 2, &isr_2, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 3, &isr_3, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 4, &isr_4, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 5, &isr_5, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 6, &isr_6, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 7, &isr_7, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 8, &isr_8, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 9, &isr_9, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 10, &isr_10, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 11, &isr_11, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 12, &isr_12, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 13, &isr_13, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 14, &isr_14, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 15, &isr_15, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 16, &isr_16, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 17, &isr_17, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 18, &isr_18, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 19, &isr_19, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 20, &isr_20, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 21, &isr_21, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 22, &isr_22, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 23, &isr_23, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 24, &isr_24, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 25, &isr_25, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 26, &isr_26, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 27, &isr_27, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 28, &isr_28, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 29, &isr_29, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 30, &isr_30, 0x0008, flags);
-    idt_set_descriptor(ISR_CPU_START + 31, &isr_31, 0x0008, flags);
+    idt_set_descriptor(ISR_CPU_START, &isr_0, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 1, &isr_1, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 2, &isr_2, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 3, &isr_3, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 4, &isr_4, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 5, &isr_5, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 6, &isr_6, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 7, &isr_7, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 8, &isr_8, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 9, &isr_9, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 10, &isr_10, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 11, &isr_11, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 12, &isr_12, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 13, &isr_13, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 14, &isr_14, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 15, &isr_15, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 16, &isr_16, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 17, &isr_17, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 18, &isr_18, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 19, &isr_19, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 20, &isr_20, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 21, &isr_21, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 22, &isr_22, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 23, &isr_23, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 24, &isr_24, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 25, &isr_25, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 26, &isr_26, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 27, &isr_27, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 28, &isr_28, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 29, &isr_29, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 30, &isr_30, 0x0008, dpl);
+    idt_set_descriptor(ISR_CPU_START + 31, &isr_31, 0x0008, dpl);
 
-    idt_set_descriptor(ISR_IRQ_MASTER_START, &irq_0, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_MASTER_START + 1, &irq_1, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_MASTER_START + 2, &irq_2, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_MASTER_START + 3, &irq_3, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_MASTER_START + 4, &irq_4, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_MASTER_START + 5, &irq_5, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_MASTER_START + 6, &irq_6, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_MASTER_START + 7, &irq_7, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_SLAVE_START, &irq_8, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_SLAVE_START + 1, &irq_9, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_SLAVE_START + 2, &irq_10, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_SLAVE_START + 3, &irq_11, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_SLAVE_START + 4, &irq_12, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_SLAVE_START + 5, &irq_13, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_SLAVE_START + 6, &irq_14, 0x0008, flags);
-    idt_set_descriptor(ISR_IRQ_SLAVE_START + 7, &irq_15, 0x0008, flags);
+    idt_set_descriptor(ISR_IRQ_MASTER_START, &irq_0, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_MASTER_START + 1, &irq_1, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_MASTER_START + 2, &irq_2, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_MASTER_START + 3, &irq_3, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_MASTER_START + 4, &irq_4, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_MASTER_START + 5, &irq_5, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_MASTER_START + 6, &irq_6, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_MASTER_START + 7, &irq_7, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_SLAVE_START, &irq_8, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_SLAVE_START + 1, &irq_9, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_SLAVE_START + 2, &irq_10, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_SLAVE_START + 3, &irq_11, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_SLAVE_START + 4, &irq_12, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_SLAVE_START + 5, &irq_13, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_SLAVE_START + 6, &irq_14, 0x0008, dpl);
+    idt_set_descriptor(ISR_IRQ_SLAVE_START + 7, &irq_15, 0x0008, dpl);
 
     idt_flush(&idt_pointer);
 

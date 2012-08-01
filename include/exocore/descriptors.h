@@ -16,4 +16,6 @@ void initialize_idt(void);
 // Number of entries in the interrupt descriptor table.
 #define IDT_SIZE 256
 
+#define MAX_DPL 3
+
 #endif
