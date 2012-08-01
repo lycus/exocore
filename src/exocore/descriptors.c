@@ -1,6 +1,8 @@
 #include "exocore/builtins.h"
 #include "exocore/console.h"
 #include "exocore/descriptors.h"
+#include "exocore/gdt.h"
+#include "exocore/idt.h"
 #include "exocore/interrupts.h"
 #include "exocore/io.h"
 #include "exocore/pic.h"
