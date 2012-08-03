@@ -11,15 +11,15 @@ void initialize_memory(void)
     physical_placement_address = kernel_end_physical;
 }
 
-uiptr* allocate(const uiptr size, const bool align, uiptr** const physical_address)
+uiptr* allocate(const uiptr size, const bool page_align, uiptr** const physical_address)
 {
     ASSERT(size);
 
     // TODO: Allocate from the heap when it's set up.
 
     // Align to either a machine word or page boundary.
-    virtual_placement_address = (ui8*)align_to((uiptr)virtual_placement_address, align ? PAGE_SIZE : sizeof(uiptr));
-    physical_placement_address = (ui8*)align_to((uiptr)physical_placement_address, align ? PAGE_SIZE : sizeof(uiptr));
+    virtual_placement_address = (ui8*)align_to((uiptr)virtual_placement_address, page_align ? PAGE_SIZE : sizeof(uiptr));
+    physical_placement_address = (ui8*)align_to((uiptr)physical_placement_address, page_align ? PAGE_SIZE : sizeof(uiptr));
 
     if (physical_address)
         *physical_address = (uiptr*)physical_placement_address;

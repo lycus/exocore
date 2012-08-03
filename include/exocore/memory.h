@@ -17,7 +17,7 @@ attr(const) static inline uiptr is_aligned(const uiptr ptr, const uiptr alignmen
 
 void initialize_memory(void);
 
-attr(malloc) uiptr* allocate(const uiptr size, const bool align, uiptr** const physical_address);
+attr(malloc) uiptr* allocate(const uiptr size, const bool page_align, uiptr** const physical_address);
 
 attr(nonnull) void free(const void* const data);
 
