@@ -21,6 +21,8 @@ SECTIONS
 
     . = . + kernel_vma;
 
+    start = .;
+
     .text : AT(ADDR(.text) - kernel_vma)
     {
         text = .;
@@ -64,4 +66,6 @@ SECTIONS
     }
 
     ebss = .;
+
+    end = .;
 }
