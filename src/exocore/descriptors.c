@@ -128,14 +128,14 @@ static void gdt_set_descriptor(const uiptr index, const ui8 dpl, const bool exec
     entry->is_executable = executable;
     entry->direction_conforming = direction_conforming;
 
-    entry->is_long_mode = index ? true : false;
+    entry->is_long_mode = !!index;
     entry->is_32_bit = false;
     entry->is_page = false;
 
-    entry->segment_type = index ? true : false; // Not a system segment.
-    entry->readable_writable = index ? true : false;
+    entry->segment_type = !!index; // Not a system segment.
+    entry->readable_writable = !!index;
     entry->accessed = false;
-    entry->present = index ? true : false;
+    entry->present = !!index;
 
     entry->kernel_bit = false;
 }
