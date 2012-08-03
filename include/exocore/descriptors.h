@@ -16,6 +16,7 @@ void initialize_idt(void);
 // Number of entries in the interrupt descriptor table.
 #define IDT_SIZE 256
 
+// The maximum privilege level starting at 0.
 #define MAX_DPL 3
 
 #endif
