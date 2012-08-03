@@ -172,7 +172,6 @@ def configure(conf):
                  '-Wpointer-arith',
                  '-Wbad-function-cast',
                  '-Wcast-qual',
-                 '-Wcast-align',
                  '-Wwrite-strings',
                  '-Wconversion',
                  '-Wstrict-prototypes',
