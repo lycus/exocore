@@ -73,6 +73,7 @@ def configure(conf):
     conf.load('gcc')
     conf.find_program('nm', var = 'NM', mandatory = True)
     conf.find_program('grub-mkrescue', var = 'MKRESCUE', mandatory = True)
+    conf.find_program('xorriso', var = 'XORRISO', mandatory = True)
 
     conf.env.kernel_PATTERN = '%s.bin'
 
