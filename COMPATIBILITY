@@ -4,8 +4,20 @@
 
 The only supported compiler is Clang (version 3.1 and up).
 
-ExoCore is currently tied to x86 with no plans to port to other
+ExoCore is currently tied to x86 (64-bit) with no plans to port to other
 architectures. This may change in the future if the project takes off.
 
 ExoCore can be compiled on any POSIX system, provided that the system has
-Clang installed with an x86 target.
+Clang 3.1+ installed with an x86 (64-bit) target.
+
+The following executables are required by the build script:
+
+* ar
+* clang
+* nm
+* grep
+* awk
+* grub-mkrescue
+* xorriso
+* ld
+* yasm

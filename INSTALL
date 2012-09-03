@@ -15,9 +15,6 @@ The ExoCore Waf script also supports some additional options:
       - Which mode to build in. Building in "debug" disables any and
         all optimizations, while "release" enables optimization and
         inlining.
-    * --target (= "i386")
-      - Which architecture to build for. Values accepted are currently
-        "i386" and "x86_64".
 
 With the project configured, you can execute a build by doing:
 
