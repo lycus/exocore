@@ -267,7 +267,7 @@ def dist(dst):
 def qemu(ctx):
     '''runs the kernel in QEMU with GDB server at localhost:1234'''
 
-    _run_shell(TOP, ctx, 'qemu -monitor stdio -S -s -cdrom {0}'.format(os.path.join(OUT, 'exocore.iso')))
+    _run_shell(TOP, ctx, 'qemu-system-x86_64 -monitor stdio -S -s -cdrom {0}'.format(os.path.join(OUT, 'exocore.iso')))
 
 class QEMUContext(Build.BuildContext):
     cmd = 'qemu'
