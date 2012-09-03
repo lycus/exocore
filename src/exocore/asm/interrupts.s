@@ -108,7 +108,8 @@ isr_common_stub:
     push r14
     push r15
 
-    ; Expects a signature like: void isr_handler(interrupt_info_t)
+    ; Expects a signature like: void isr_handler(interrupt_info_t*)
+    mov rdi, rsp
     call isr_handler
 
     ; Restore all GPRs.
@@ -194,7 +195,8 @@ irq_common_stub:
     push r14
     push r15
 
-    ; Expects a signature like: void irq_handler(interrupt_info_t)
+    ; Expects a signature like: void irq_handler(interrupt_info_t*)
+    mov rdi, rsp
     call irq_handler
 
     ; Restore all GPRs.
