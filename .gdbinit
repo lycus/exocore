@@ -1,3 +1,2 @@
-cd build
 target remote localhost:1234
-file exocore.bin
+file build/exocore.bin
