@@ -11,7 +11,6 @@ TOP = os.curdir
 OUT = 'build'
 
 def options(opt):
-    opt.add_option('--target', action = 'store', default = 'x86_64', help = 'target architecture to build for (i386/x86_64)')
     opt.add_option('--mode', action = 'store', default = 'debug', help = 'the mode to compile in (debug/release)')
 
 class kernel(ccroot.link_task):
@@ -38,7 +37,7 @@ def iso(self):
 class iso(Task.Task):
     "Build a bootable ISO for GRUB 2"
 
-    run_str = '${MKRESCUE} -o ${TGT} ${SRC} ${ISOFLAGS} -- -report-about SORRY > /dev/null 2>&1'
+    run_str = '${MKRESCUE} -o ${TGT} ${SRC} --xorriso=${XORRISO} ${ISOFLAGS} -- -report-about SORRY > /dev/null 2>&1'
     ext_out = ['.iso']
     inst_to = None
     color = 'PINK'
@@ -61,8 +60,6 @@ class syms(Task.Task):
     color = 'CYAN'
 
 def configure(conf):
-    conf.env.TARGET = conf.options.target
-
     def add_options(flags, options):
         for option in options:
             if option not in conf.env[flags]:
@@ -71,13 +68,6 @@ def configure(conf):
     conf.load('ar')
     conf.find_program('clang', var = 'CC', mandatory = True)
     conf.load('gcc')
-    conf.find_program('nm', var = 'NM', mandatory = True)
-    conf.find_program('grep', var = 'GREP', mandatory = True)
-    conf.find_program('awk', var = 'AWK', mandatory = True)
-    conf.find_program('grub-mkrescue', var = 'MKRESCUE', mandatory = True)
-    conf.find_program('xorriso', var = 'XORRISO', mandatory = True)
-
-    conf.env.kernel_PATTERN = '%s.bin'
 
     conf.check_cc(fragment = r'''int main()
                                  {
@@ -92,72 +82,8 @@ def configure(conf):
                   execute = False,
                   msg = 'Checking for clang 3.1+')
 
-    conf.find_program('ld', var = 'LD', mandatory = True)
-
-    add_options('KERNLINKFLAGS',
-                ['-z',
-                 'max-page-size=0x1000'])
-
-    if conf.options.target == 'i386' or conf.options.target == 'x86_64':
-        conf.find_program('yasm', var = 'AS', mandatory = True)
-        conf.load('nasm')
-
-        add_options('ASFLAGS',
-                    ['-DEXOCORE_TARGET_{0}'.format(conf.options.target.upper())])
-
-        add_options('ASFLAGS',
-                    ['-w',
-                     '-Worphan-labels',
-                     '-Wunrecognized-char'])
-
-        if conf.options.target == 'i386':
-            add_options('CFLAGS',
-                        ['-m32'])
-
-            add_options('ASFLAGS',
-                        ['-DEXOCORE_IS_32_BIT=1'])
-
-            add_options('ASFLAGS',
-                        ['-f',
-                         'elf32'])
-
-            add_options('KERNLINKFLAGS',
-                        ['-b',
-                         'elf32-i386',
-                         '-m',
-                         'elf_i386'])
-        else:
-            add_options('CFLAGS',
-                        ['-m64'])
-
-            add_options('ASFLAGS',
-                        ['-DEXOCORE_IS_32_BIT=0'])
-
-            add_options('ASFLAGS',
-                        ['-f',
-                         'elf64'])
-
-            add_options('KERNLINKFLAGS',
-                        ['-b',
-                         'elf64-x86-64',
-                         '-m',
-                         'elf_x86_64'])
-    else:
-        conf.fatal('--target must be either i386 or x86_64.')
-
-    add_options('KERNLINKFLAGS',
-                ['-T',
-                 os.path.abspath(os.path.join('linker', '{0}.ld'.format(conf.options.target)))])
-
     add_options('CFLAGS',
-                ['-DEXOCORE_TARGET_{0}'.format(conf.options.target.upper())])
-
-    if conf.options.target == 'i386':
-        add_options('CFLAGS',
-                    ['-DEXOCORE_IS_32_BIT=1'])
-    else:
-        add_options('CFLAGS',
-                    ['-DEXOCORE_IS_32_BIT=0'])
+                ['-m64'])
 
     add_options('CFLAGS',
                 ['-std=gnu11',
@@ -194,33 +120,67 @@ def configure(conf):
 
     add_options('CFLAGS',
                 ['-fwrapv',
-                 '-fno-omit-frame-pointer'])
+                 '-fno-omit-frame-pointer',
+                 '-mcmodel=kernel'])
 
-    add_options('CFLAGS',
-                ['-mcmodel=large'])
+    conf.find_program('yasm', var = 'AS', mandatory = True)
+    conf.load('nasm')
+
+    add_options('ASFLAGS',
+                ['-f',
+                 'elf64'])
+
+    add_options('ASFLAGS',
+                ['-w',
+                 '-Worphan-labels',
+                 '-Wunrecognized-char'])
+
+    conf.env.kernel_PATTERN = '%s.bin'
+
+    conf.find_program('ld', var = 'LD', mandatory = True)
+
+    add_options('KERNLINKFLAGS',
+                ['-b',
+                 'elf64-x86-64',
+                 '-m',
+                 'elf_x86_64'])
+
+    add_options('KERNLINKFLAGS',
+                ['-z',
+                 'max-page-size=4096'])
+
+    add_options('KERNLINKFLAGS',
+                ['-T',
+                 os.path.abspath(os.path.join('linker', 'x86_64.ld'))])
+
+    conf.find_program('nm', var = 'NM', mandatory = True)
+    conf.find_program('grep', var = 'GREP', mandatory = True)
+    conf.find_program('awk', var = 'AWK', mandatory = True)
+
+    conf.find_program('grub-mkrescue', var = 'MKRESCUE', mandatory = True)
+    conf.find_program('xorriso', var = 'XORRISO', mandatory = True)
+
+    add_options('ISOFLAGS',
+                [os.path.abspath('iso')])
 
     if conf.options.mode == 'debug':
         add_options('CFLAGS',
                     ['-DEXOCORE_DEBUG'])
 
-        add_options('ASFLAGS',
-                    ['-DEXOCORE_DEBUG'])
-
         add_options('CFLAGS',
-                    ['-fcatch-undefined-behavior',
-                     '-ftrapv'])
+                    ['-fcatch-undefined-behavior'])
 
         add_options('CFLAGS',
                     ['-g',
                      '-ggdb'])
+
+        add_options('ASFLAGS',
+                    ['-DEXOCORE_DEBUG'])
     elif conf.options.mode == 'release':
         add_options('CFLAGS',
                     ['-O3'])
     else:
         conf.fatal('--mode must be either debug or release.')
-
-    add_options('ISOFLAGS',
-                [os.path.abspath('iso')])
 
 def build(bld):
     def search_paths(*k, **kw):
