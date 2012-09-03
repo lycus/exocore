@@ -11,7 +11,7 @@ TOP = os.curdir
 OUT = 'build'
 
 def options(opt):
-    opt.add_option('--target', action = 'store', default = 'i386', help = 'target architecture to build for (i386/x86_64)')
+    opt.add_option('--target', action = 'store', default = 'x86_64', help = 'target architecture to build for (i386/x86_64)')
     opt.add_option('--mode', action = 'store', default = 'debug', help = 'the mode to compile in (debug/release)')
 
 class kernel(ccroot.link_task):
