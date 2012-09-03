@@ -11,7 +11,7 @@ void initialize_pit(void)
     INFO("Initializing interrupt timer... ");
 
     // Firstly, register our timer callback.
-    set_interrupt_handler(INTERRUPT_IRQ_TIMER, ^(const interrupt_info_t info attr(unused))
+    set_interrupt_handler(INTERRUPT_IRQ_TIMER, ^(const interrupt_info_t* const info attr(unused))
     {
         current_ticks++;
     });

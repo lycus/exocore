@@ -83,7 +83,7 @@ typedef struct interrupt_info
     const uiptr user_ss;
 } attr(packed) interrupt_info_t;
 
-typedef void (^ isr_t)(const interrupt_info_t);
+typedef void (^ isr_t)(const interrupt_info_t* const);
 
 // Sets a block to be called when an interrupt fires.
 void set_interrupt_handler(const interrupt_id_t id, const isr_t handler);

@@ -12,7 +12,7 @@ ui8* kernel_end_virtual;
 
 extern uiptr end;
 
-void kmain(const ui32 magic, const multiboot_info_t* const info, void* const sp)
+void kmain(const ui32 magic, const multiboot_info_t* const info attr(unused), void* const sp attr(unused))
 {
     ASSERT(info);
     ASSERT(sp);

@@ -32,7 +32,7 @@ uiptr* allocate(const uiptr size, const bool page_align, uiptr** const physical_
     return (uiptr*)addr;
 }
 
-void free(const void* const data)
+void free(const void* const data attr(unused))
 {
     ASSERT(data);
     ASSERT(is_aligned((uiptr)data, sizeof(uiptr)));

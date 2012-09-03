@@ -11,9 +11,9 @@ void set_interrupt_handler(const interrupt_id_t id, const isr_t handler)
     interrupt_handlers[id] = handler;
 }
 
-void isr_handler(const interrupt_info_t info)
+void isr_handler(const interrupt_info_t* const info)
 {
-    switch (info.id)
+    switch (info->id)
     {
         case INTERRUPT_DIVISION_BY_ZERO_EXCEPTION:
             DEBUG("Received interrupt: INTERRUPT_DIVISION_BY_ZERO_EXCEPTION\n");
@@ -138,13 +138,13 @@ void isr_handler(const interrupt_info_t info)
     }
 
     // Call an interrupt handler, if there is one.
-    if (interrupt_handlers[info.id])
-        interrupt_handlers[info.id](info);
+    if (interrupt_handlers[info->id])
+        interrupt_handlers[info->id](info);
 }
 
-void irq_handler(const interrupt_info_t info)
+void irq_handler(const interrupt_info_t* const info)
 {
-    if (info.id >= INTERRUPT_IRQ_CMOS_CLOCK)
+    if (info->id >= INTERRUPT_IRQ_CMOS_CLOCK)
     {
         io_write_ui8(PIC_SLAVE_COMMAND, PIC_OCW2_EOI);
         io_wait();
