@@ -55,7 +55,7 @@ def syms(self):
 class syms(Task.Task):
     "Build symbol list for a binary"
 
-    run_str = '${NM} -n ${SRC} | grep -v \'\( [aUw] \)\|\(__crc_\)\|\( \$[adt]\)\' | awk \'{print $1, $3}\' > ${TGT}'
+    run_str = '${NM} -n ${SRC} | ${GREP} -v \'\( [aUw] \)\|\(__crc_\)\|\( \$[adt]\)\' | ${AWK} \'{print $1, $3}\' > ${TGT}'
     ext_out = ['.sym']
     inst_to = None
     color = 'CYAN'
@@ -72,6 +72,8 @@ def configure(conf):
     conf.find_program('clang', var = 'CC', mandatory = True)
     conf.load('gcc')
     conf.find_program('nm', var = 'NM', mandatory = True)
+    conf.find_program('grep', var = 'GREP', mandatory = True)
+    conf.find_program('awk', var = 'AWK', mandatory = True)
     conf.find_program('grub-mkrescue', var = 'MKRESCUE', mandatory = True)
     conf.find_program('xorriso', var = 'XORRISO', mandatory = True)
 
