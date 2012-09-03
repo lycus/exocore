@@ -121,7 +121,7 @@ def configure(conf):
     add_options('CFLAGS',
                 ['-fwrapv',
                  '-fno-omit-frame-pointer',
-                 '-mcmodel=kernel'])
+                 '-mcmodel=large'])
 
     conf.find_program('yasm', var = 'AS', mandatory = True)
     conf.load('nasm')
