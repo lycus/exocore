@@ -111,6 +111,9 @@ def configure(conf):
                      '-Wunrecognized-char'])
 
         if conf.options.target == 'i386':
+            add_options('CFLAGS',
+                        ['-m32'])
+
             add_options('ASFLAGS',
                         ['-DEXOCORE_IS_32_BIT=1'])
 
@@ -124,6 +127,9 @@ def configure(conf):
                          '-m',
                          'elf_i386'])
         else:
+            add_options('CFLAGS',
+                        ['-m64'])
+
             add_options('ASFLAGS',
                         ['-DEXOCORE_IS_32_BIT=0'])
 
@@ -152,10 +158,6 @@ def configure(conf):
     else:
         add_options('CFLAGS',
                     ['-DEXOCORE_IS_32_BIT=0'])
-
-    add_options('CFLAGS',
-                ['-ccc-host-triple',
-                 conf.options.target])
 
     add_options('CFLAGS',
                 ['-std=gnu11',
