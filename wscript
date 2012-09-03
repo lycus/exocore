@@ -37,7 +37,7 @@ def iso(self):
 class iso(Task.Task):
     "Build a bootable ISO for GRUB 2"
 
-    run_str = '${MKRESCUE} -o ${TGT} ${SRC} --xorriso=${XORRISO} ${ISOFLAGS} -- -report-about SORRY > /dev/null 2>&1'
+    run_str = '${MKRESCUE} -o ${TGT} ${SRC} ${ISOFLAGS} -- -report-about SORRY > /dev/null 2>&1'
     ext_out = ['.iso']
     inst_to = None
     color = 'PINK'
