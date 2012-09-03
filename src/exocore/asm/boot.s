@@ -36,15 +36,6 @@ tag_end_end:
 
 header_end:
 
-%if EXOCORE_IS_32_BIT
-align PAGE_SIZE
-boot_page_directory:
-
-    dd 00000000000000000000000010000011b
-    times KERNEL_PAGE_NUMBER - 1 dd 00000000000000000000000000000000b
-    dd 00000000000000000000000010000011b
-    times PAGE_DIRECTORY_ENTRIES - KERNEL_PAGE_NUMBER - 2 dd 00000000000000000000000000000000b
-%else
 align PAGE_SIZE
 pml4_base:
 
@@ -113,7 +104,6 @@ boot_gdt:
     db 00000000b
 
 boot_gdt_end:
-%endif
 
 global kernel_loader
 
@@ -128,22 +118,6 @@ kernel_loader:
     mov edi, eax ; Magic number.
     mov esi, ebx ; Info structure pointer.
 
-%if EXOCORE_IS_32_BIT
-    ; Addresses must be physical until we enable paging.
-    mov ecx, boot_page_directory
-    mov edx, KERNEL_VMA
-    sub ecx, edx
-
-    ; Set the page directory.
-    mov cr3, ecx
-
-    mov ecx, cr4
-
-    ; Enable 4 MB pages.
-    bts ecx, 4 ; Set CR4.PSE bit.
-
-    mov cr4, ecx
-%else
     mov ecx, cr4
 
     ; Enable 64-bit page translation table entries.
@@ -163,7 +137,6 @@ kernel_loader:
 
     ; Load the boot-time GDT.
     lgdt [boot_gdt_pointer]
-%endif
 
     mov ecx, cr0
 
@@ -173,25 +146,11 @@ kernel_loader:
 
     mov cr0, ecx
 
-%if EXOCORE_IS_32_BIT
-    mov ecx, cr4
-
-    ; Enable global paging.
-    bts ecx, 7 ; Set CR4.PGE bit.
-
-    mov cr4, ecx
-
-    lea ecx, [high]
-    jmp ecx
-%else
     jmp KERNEL_CODE_SEGMENT:high64 - KERNEL_VMA
-%endif
 
 section .text
 
-%if EXOCORE_IS_32_BIT == 0
 bits 64
-%endif
 
 align 8
 stack_bottom:
@@ -200,7 +159,6 @@ stack_bottom:
 
 stack_top:
 
-%if EXOCORE_IS_32_BIT == 0
 align 8
 high64:
 
@@ -215,18 +173,13 @@ high64:
     push rax
 
     ret
-%endif
 
 align 8
 high:
 
     ; Set up the stack (grows down).
-%if EXOCORE_IS_32_BIT
-    mov esp, stack_top
-%else
     mov rsp, (KERNEL_VMA >> 32) << 32
     or rsp, stack_top - (KERNEL_VMA & 0xffffffff00000000)
-%endif
 
     ; Reset EFLAGS to a known state.
     xor eax, eax
@@ -235,43 +188,9 @@ high:
     bts eax, 12 ; Set EFLAGS.IOPL.1 bit.
     bts eax, 13 ; Set EFLAGS.IOPL.2 bit.
 
-%if EXOCORE_IS_32_BIT
-    push eax
-    popfd
-%else
     push rax
     popfq
-%endif
 
-%if EXOCORE_IS_32_BIT
-    mov ecx, cr0
-
-    ; Enable x87 and SSE.
-    bts ecx, 1 ; Set CR0.MP bit.
-    btr ecx, 2 ; Clear CR0.EM bit.
-
-    ; Disable write protection.
-    btr ecx, 16 ; Clear CR0.WP bit.
-
-    ; Ensure memory coherency is maintained.
-    btr ecx, 29 ; Clear CR0.NW bit.
-    bts ecx, 30 ; Set CR0.CD bit.
-
-    mov cr0, ecx
-
-    mov ecx, cr4
-
-    ; Allow DR4 and DR5 access for compatibility.
-    bts ecx, 3 ; Set CR4.DE bit.
-
-    ; Enable saving/restoring of x87 and SSE state.
-    bts ecx, 9 ; Set CR4.OSFXSR bit.
-
-    ; Support unmasked SIMD exceptions.
-    bts ecx, 10 ; Set CR4.OSXMMEXCPT bit.
-
-    mov cr4, ecx
-%else
     mov rcx, cr0
 
     ; Enable x87 and SSE.
@@ -299,24 +218,13 @@ high:
     bts rcx, 10 ; Set CR4.OSXMMEXCPT bit.
 
     mov cr4, rcx
-%endif
 
     ; Nullify the stack frame pointer.
-%if EXOCORE_IS_32_BIT
-    xor ebp, ebp
-%else
     xor rbp, rbp
-%endif
 
     ; Pass Multiboot information and stack pointer.
-%if EXOCORE_IS_32_BIT
-    push esp
-    push esi
-    push edi
-%else
     ; RDI and RSI are already set.
     mov rdx, rsp
-%endif
 
     ; Start the kernel. Expects a signature like: void kmain(ui32, multiboot_info*, void*)
     call kmain

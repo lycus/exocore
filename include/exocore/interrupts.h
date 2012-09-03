@@ -58,7 +58,6 @@ typedef enum interrupt_id : uiptr
 typedef struct interrupt_info
 {
     const uiptr ds; // Data segment selector.
-#if !EXOCORE_IS_32_BIT
     const uiptr r15; // General purpose R15 register.
     const uiptr r14; // General purpose R14 register.
     const uiptr r13; // General purpose R13 register.
@@ -67,21 +66,20 @@ typedef struct interrupt_info
     const uiptr r10; // General purpose R10 register.
     const uiptr r9; // General purpose R9 register.
     const uiptr r8; // General purpose R8 register.
-#endif
-    const uiptr edi; // General purpose EDI register.
-    const uiptr esi; // General purpose ESI register.
-    const uiptr ebp; // General purpose EBP register.
-    const uiptr esp; // General purpose ESP register.
-    const uiptr ebx; // General purpose EBX register.
-    const uiptr edx; // General purpose EDX register.
-    const uiptr ecx; // General purpose ECX register.
-    const uiptr eax; // General purpose EAX register.
+    const uiptr rdi; // General purpose RDI register.
+    const uiptr rsi; // General purpose RSI register.
+    const uiptr rbp; // General purpose RBP register.
+    const uiptr rsp; // General purpose RSP register.
+    const uiptr rbx; // General purpose RBX register.
+    const uiptr rdx; // General purpose RDX register.
+    const uiptr rcx; // General purpose RCX register.
+    const uiptr rax; // General purpose RAX register.
     const interrupt_id_t id; // Interrupt identifier.
     const uiptr error_code; // Error code (0 if not applicable).
-    const uiptr user_eip;
+    const uiptr user_rip;
     const uiptr user_cs;
-    const uiptr user_eflags;
-    const uiptr user_esp;
+    const uiptr user_rflags;
+    const uiptr user_rsp;
     const uiptr user_ss;
 } attr(packed) interrupt_info_t;
 

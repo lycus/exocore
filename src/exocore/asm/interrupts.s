@@ -90,21 +90,6 @@ extern isr_handler
 align 8
 isr_common_stub:
 
-%if EXOCORE_IS_32_BIT
-    ; Save all GPRs.
-    pushad
-
-    ; Back up the data segment descriptor.
-    mov ax, ds
-    push eax
-
-    ; Load the kernel data segment descriptor.
-    mov ax, KERNEL_DATA_SEGMENT
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-%else
     ; Save all GPRs.
     push rax
     push rcx
@@ -122,26 +107,10 @@ isr_common_stub:
     push r13
     push r14
     push r15
-%endif
 
     ; Expects a signature like: void isr_handler(interrupt_info_t)
     call isr_handler
 
-%if EXOCORE_IS_32_BIT
-    ; Reload the original data segment descriptor.
-    pop eax
-
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-
-    ; Restore all GPRs.
-    popad
-
-    ; Pop the interrupt identifier and error code.
-    add esp, 4 + 4
-%else
     ; Restore all GPRs.
     pop r15
     pop r14
@@ -162,17 +131,12 @@ isr_common_stub:
 
     ; Pop the interrupt identifier and error code.
     add esp, 8 + 8
-%endif
 
     ; Enable interrupts.
     sti
 
     ; Return from the ISR.
-%if EXOCORE_IS_32_BIT
-    iretd
-%else
     iretq
-%endif
 
 ; Helper macro for defining IRQs.
 %macro irq 2
@@ -212,21 +176,6 @@ extern irq_handler
 align 8
 irq_common_stub:
 
-%if EXOCORE_IS_32_BIT
-    ; Save all GPRs.
-    pushad
-
-    ; Back up the data segment descriptor.
-    mov ax, ds
-    push eax
-
-    ; Load the kernel data segment descriptor.
-    mov ax, KERNEL_DATA_SEGMENT
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-%else
     ; Save all GPRs.
     push rax
     push rcx
@@ -244,25 +193,10 @@ irq_common_stub:
     push r13
     push r14
     push r15
-%endif
 
     ; Expects a signature like: void irq_handler(interrupt_info_t)
     call irq_handler
 
-%if EXOCORE_IS_32_BIT
-    ; Reload the original data segment descriptor.
-    pop eax
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-
-    ; Restore all GPRs.
-    popad
-
-    ; Pop the interrupt identifier and error code.
-    add esp, 4 + 4
-%else
     ; Restore all GPRs.
     pop r15
     pop r14
@@ -283,14 +217,9 @@ irq_common_stub:
 
     ; Pop the interrupt identifier and error code.
     add esp, 8 + 8
-%endif
 
     ; Enable interrupts.
     sti
 
     ; Return from the IRQ.
-%if EXOCORE_IS_32_BIT
-    iretd
-%else
     iretq
-%endif

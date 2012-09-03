@@ -147,7 +147,7 @@ def configure(conf):
 
     add_options('KERNLINKFLAGS',
                 ['-z',
-                 'max-page-size=4096'])
+                 'max-page-size=0x1000'])
 
     add_options('KERNLINKFLAGS',
                 ['-T',

@@ -12,11 +12,7 @@
 // The default background color.
 #define CONSOLE_BACKGROUND CONSOLE_COLOR_GREY
 
-#if EXOCORE_IS_32_BIT
-#    define CONSOLE_VIDEO_ADDRESS ((volatile ui8*)0xC00b8000)
-#else
-#    define CONSOLE_VIDEO_ADDRESS ((volatile ui8*)0xffff8000000b8000)
-#endif
+#define CONSOLE_VIDEO_ADDRESS ((volatile ui8*)0xffff8000000b8000)
 
 static ui8 console_position_x;
 static ui8 console_position_y;
