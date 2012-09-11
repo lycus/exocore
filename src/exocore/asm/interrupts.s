@@ -131,7 +131,7 @@ isr_common_stub:
     pop rax
 
     ; Pop the interrupt identifier and error code.
-    add esp, 8 + 8
+    add rsp, 8 + 8
 
     ; Enable interrupts.
     sti
@@ -218,7 +218,7 @@ irq_common_stub:
     pop rax
 
     ; Pop the interrupt identifier and error code.
-    add esp, 8 + 8
+    add rsp, 8 + 8
 
     ; Enable interrupts.
     sti
