@@ -158,7 +158,6 @@ def configure(conf):
     conf.find_program('awk', var = 'AWK', mandatory = True)
 
     conf.find_program(['grub-mkrescue', 'grub2-mkrescue'], var = 'MKRESCUE', mandatory = True)
-    conf.find_program('xorriso', var = 'XORRISO', mandatory = True)
 
     add_options('ISOFLAGS',
                 [os.path.abspath('iso')])
