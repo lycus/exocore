@@ -17,7 +17,6 @@ The following executables are required by the build script:
 * nm
 * grep
 * awk
-* grub-mkrescue
-* xorriso
+* grub-mkrescue/grub2-mkrescue
 * ld
 * yasm
