@@ -20,3 +20,5 @@ The following executables are required by the build script:
 * grub-mkrescue/grub2-mkrescue
 * ld
 * yasm
+
+Python 2.7+ is needed to run the project's build scripts.

@@ -2,12 +2,14 @@
 
                 -- Installation --
 
-Building works through the Waf build system. You can obtain Waf from:
-http://code.google.com/p/waf
+Installation works through the Waf build system. You can obtain Waf by
+running the included bootstrap script:
+
+    $ ./bootstrap.py
 
 Once installed, you must configure the project like so:
 
-    $ waf configure
+    $ ./waf configure
 
 The ExoCore Waf script also supports some additional options:
 
@@ -18,11 +20,14 @@ The ExoCore Waf script also supports some additional options:
 
 With the project configured, you can execute a build by doing:
 
-    $ waf build
+    $ ./waf build
+
+This builds the entire kernel and puts together a bootable ISO image
+using GRUB 2.
 
 You can optionally build the documentation:
 
-    $ waf docs
+    $ ./waf docs
 
 The documentation will be placed in 'docs/_build'. You'll probably
 be interested in 'docs/_build/html/index.html' primarily.

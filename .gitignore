@@ -2,5 +2,9 @@ docs/_build/*
 build/*
 iso/boot/*.bin
 
-.lock*
+waf
+
+.lock-*
+.waf-*
+
 *.orig
