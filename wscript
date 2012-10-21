@@ -192,42 +192,6 @@ def build(bld):
         source = bld.path.ant_glob(search_paths(os.path.join('src', 'exocore'))),
         target = 'exocore')
 
-class DistCheckContext(Scripting.Dist):
-    cmd = 'distcheck'
-    fun = 'distcheck'
-
-    def execute(self):
-        self.recurse([os.path.dirname(Context.g_module.root_path)])
-        self.archive()
-        self.check()
-
-    def check(self):
-        with tarfile.open(self.get_arch_name()) as t:
-            for x in t:
-                t.extract(x)
-
-        instdir = tempfile.mkdtemp('.inst', self.get_base_name())
-        cfg = [x for x in sys.argv if x.startswith('-')]
-
-        ret = Utils.subprocess.Popen([sys.argv[0],
-                                      'configure',
-                                      'install',
-                                      'uninstall',
-                                      '--destdir=' + instdir] + cfg, cwd = self.get_base_name()).wait()
-
-        if ret:
-            self.fatal('distcheck failed with code {0}'.format(ret))
-
-        if os.path.exists(instdir):
-            self.fatal('distcheck succeeded, but files were left in {0}'.format(instdir))
-
-        shutil.rmtree(self.get_base_name())
-
-def distcheck(ctx):
-    '''checks if the project compiles (tarball from 'dist')'''
-
-    pass
-
 def _run_shell(dir, ctx, args, wait = True):
     cwd = os.getcwd()
     os.chdir(dir)
