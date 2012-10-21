@@ -10,7 +10,7 @@ VERSION = '1.0'
 TOP = os.curdir
 OUT = 'build'
 
-Context.classes = filter(lambda x: x.cmd != 'distcheck', Context.classes)
+Context.classes = [x for x in Context.classes if x.cmd != 'distcheck']
 
 def options(opt):
     opt.add_option('--mode', action = 'store', default = 'debug', help = 'the mode to compile in (debug/release)')
