@@ -10,6 +10,8 @@ VERSION = '1.0'
 TOP = os.curdir
 OUT = 'build'
 
+Context.classes = filter(lambda x: x.cmd != 'distcheck', Context.classes)
+
 def options(opt):
     opt.add_option('--mode', action = 'store', default = 'debug', help = 'the mode to compile in (debug/release)')
 
@@ -244,3 +246,6 @@ def bochs(ctx):
 class BochsContext(Build.BuildContext):
     cmd = 'bochs'
     fun = 'bochs'
+
+def distcheck(ctx):
+    ctx.fatal('distcheck is not supported')
