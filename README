@@ -8,6 +8,10 @@ a so-called exokernel; it only provides the bare minimum of abstraction needed
 around the hardware. This allows for most aspects of real operating systems to
 be implemented in user space.
 
+ExoCore is primarily a reference project. It is not intended to be a kernel
+for real world usage; rather, to be a learning project for the developers and
+anyone else interested in kernel development.
+
 For further information, see:
 
     * LICENSE
@@ -20,8 +24,6 @@ For further information, see:
       - Names and contact information for ExoCore developers.
     * THANKS
       - Credits and appreciation where due.
-    * STYLE
-      - Coding style rules (only relevant if you're a contributor).
 
 See also the documentation in the 'docs' directory.
 
