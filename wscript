@@ -173,6 +173,10 @@ def configure(conf):
 
         add_options('ASFLAGS',
                     ['-DEXOCORE_DEBUG'])
+
+        add_options('ASFLAGS',
+                    ['-g',
+                     'dwarf2'])
     elif conf.options.mode == 'release':
         add_options('CFLAGS',
                     ['-O3'])
